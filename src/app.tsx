@@ -1,5 +1,4 @@
 import { Button } from 'dread-ui';
-import './app.scss';
 
 function App() {
   return (
