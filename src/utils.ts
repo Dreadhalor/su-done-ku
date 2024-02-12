@@ -51,6 +51,14 @@ const getRegions = (board: Cell[][]) => {
   return regions;
 };
 
+type Elimination = {
+  boardSnapshot: Cell[][];
+  type: string;
+  referenceCells: Cell[];
+  modifiedCells: Cell[];
+  removedValues: CellValue[];
+};
+
 // look at every cell with a value and remove that value from the hintValues of every cell in the same row, column, and 3x3 grid
 export const crossHatch = (board: Cell[][]) => {
   // get all the cells with a value

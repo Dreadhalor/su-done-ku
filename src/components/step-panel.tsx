@@ -24,7 +24,7 @@ const StepControl = ({
   onCheckedChange,
 }: StepControlProps) => {
   return (
-    <div className='flex flex-nowrap'>
+    <div className='flex flex-nowrap gap-2'>
       <Checkbox
         id={id}
         checked={checked}
@@ -74,7 +74,7 @@ const StepPanel = () => {
       <StepControl
         id='crossHatch'
         checked={useCrossHatch}
-        name='Cross Hatch'
+        name='Crosshatch'
         onCheckedChange={setUseCrossHatch}
       />
       <StepControl

@@ -1,4 +1,3 @@
-import { cn } from '@repo/utils';
 import {
   Button,
   Select,
@@ -19,7 +18,7 @@ type PresetPuzzle = 'nakedTriple' | 'hiddenSingle' | 'nakedPair' | 'hiddenPair';
 
 // create a sudoku board with a 9x9 grid of cells, where each cell is a 3x3 grid of cells containing numbers 1-9
 function App() {
-  const { board, setBoard } = useBoard();
+  const { setBoard } = useBoard();
   const [sudokuToLoad, setSudokuToLoad] = useState<string>('');
 
   useEffect(() => {
@@ -41,53 +40,16 @@ function App() {
     newBoard[4]![5]!.value = 1;
 
     setBoard(newBoard);
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const generatePuzzle = () => {
-    // generate a solved puzzle
-    const solvedPuzzle: Cell[][] = Array.from({ length: 9 }).map(
-      (_, rowIndex) =>
-        Array.from({ length: 9 }).map(
-          (_, columnIndex) =>
-            ({
-              value:
-                ((rowIndex * 3 + Math.floor(rowIndex / 3) + columnIndex) % 9) +
-                1,
-              hintValues: [],
-              rowIndex,
-              columnIndex,
-              boxIndex:
-                Math.floor(rowIndex / 3) * 3 + Math.floor(columnIndex / 3),
-              isLocked: true,
-            }) as Cell,
-        ),
-    );
-
-    // remove a random number of cells from the solved puzzle
-    const puzzle: Cell[][] = solvedPuzzle.map((row) =>
-      row.map((cell) =>
-        Math.random() < 0.5
-          ? {
-              ...cell,
-              value: null,
-              isLocked: false,
-              hintValues: [1, 2, 3, 4, 5, 6, 7, 8, 9],
-            }
-          : cell,
-      ),
-    );
-
-    setBoard(puzzle);
-  };
-
-  const generatePuzzleWithApi = async () => {
-    const response = await fetch(
-      'https://sugoku.onrender.com/board?difficulty=medium',
-    );
-    const puzzle = await response.json();
-    const apiBoard = puzzle.board;
-    setBoard(parseBoard(apiBoard));
-  };
+  // const generatePuzzleWithApi = async () => {
+  //   const response = await fetch(
+  //     'https://sugoku.onrender.com/board?difficulty=medium',
+  //   );
+  //   const puzzle = await response.json();
+  //   const apiBoard = puzzle.board;
+  //   setBoard(parseBoard(apiBoard));
+  // };
 
   const loadPuzzle = (puzzle: PresetPuzzle) => {
     switch (puzzle) {
@@ -110,7 +72,10 @@ function App() {
 
   return (
     <div className='flex h-full w-full items-center justify-center gap-4 border-4 border-white text-black'>
-      <CellGrid />
+      <div className='flex flex-col gap-2'>
+        <CellGrid />
+        <div className='h-24 rounded-md bg-white'></div>
+      </div>
       <div className='flex flex-col gap-4'>
         <div className='flex flex-nowrap'>
           <Select value={sudokuToLoad} onValueChange={setSudokuToLoad}>
