@@ -8,13 +8,24 @@ import {
 } from 'dread-ui';
 import { useEffect, useState } from 'react';
 import { Cell, parseBoard } from './utils';
-import { hiddenSingle, nakedPair, hiddenPair, nakedTriple } from './boards';
+import {
+  hiddenSingle,
+  nakedPair,
+  hiddenPair,
+  nakedTriple,
+  hiddenTriple,
+} from './boards';
 import { StepPanel } from './components/step-panel';
 import { useBoard } from './providers/board-context';
 import { FaCheck } from 'react-icons/fa';
 import { CellGrid } from './components/cell-grid';
 
-type PresetPuzzle = 'nakedTriple' | 'hiddenSingle' | 'nakedPair' | 'hiddenPair';
+type PresetPuzzle =
+  | 'nakedTriple'
+  | 'hiddenSingle'
+  | 'nakedPair'
+  | 'hiddenPair'
+  | 'hiddenTriple';
 
 // create a sudoku board with a 9x9 grid of cells, where each cell is a 3x3 grid of cells containing numbers 1-9
 function App() {
@@ -65,6 +76,9 @@ function App() {
       case 'hiddenPair':
         setBoard(parseBoard(hiddenPair));
         break;
+      case 'hiddenTriple':
+        setBoard(parseBoard(hiddenTriple));
+        break;
       default:
         break;
     }
@@ -87,6 +101,7 @@ function App() {
               <SelectItem value='nakedPair'>Naked Pair</SelectItem>
               <SelectItem value='nakedTriple'>Naked Triple</SelectItem>
               <SelectItem value='hiddenPair'>Hidden Pair</SelectItem>
+              <SelectItem value='hiddenTriple'>Hidden Triple</SelectItem>
             </SelectContent>
           </Select>
           <Button

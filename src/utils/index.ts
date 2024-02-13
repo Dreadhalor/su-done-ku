@@ -3,6 +3,7 @@ export * from './algorithms/hidden-singles';
 export * from './algorithms/naked-pairs';
 export * from './algorithms/naked-triples';
 export * from './algorithms/hidden-pairs';
+export * from './algorithms/hidden-triples';
 export * from './algorithms/naked-quads';
 
 export type Cell = {
@@ -112,3 +113,7 @@ export const parseBoard = (board: number[][]) =>
         }) as Cell,
     ),
   );
+
+// we're not actually using this anymore
+export const sortCells = (a: Cell, b: Cell | undefined) =>
+  b ? 10 * (a.rowIndex - b.rowIndex) + (a.columnIndex - b.columnIndex) : -1;

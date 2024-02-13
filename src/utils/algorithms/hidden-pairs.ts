@@ -18,7 +18,7 @@ export const hiddenPairs = (board: Cell[][]) => {
         if (cellsWithHint) cellsWithHint.push(cell);
       });
     });
-    // any hint value with more or less than 2 cells is not a hidden pair, so we can ignore it
+    // any hint value with more or less than 2 cells can't be part of a hidden pair, so we can ignore it
     const hints = Object.keys(hintValueMap).filter(
       (hint) => hintValueMap[hint]!.length === 2,
     );
@@ -28,34 +28,37 @@ export const hiddenPairs = (board: Cell[][]) => {
     }));
     for (let i = 0; i < candidatePairs.length - 1; i++) {
       for (let j = i + 1; j < candidatePairs.length; j++) {
-        const hint1 = candidatePairs[i]!;
-        const hint2 = candidatePairs[j]!;
-        const [a_0, a_1] = hint1.cells;
-        const [b_0, b_1] = hint2.cells;
-        if ((a_0 === b_0 && a_1 === b_1) || (a_0 === b_1 && a_1 === b_0)) {
-          // if both cells only have 2 hint values, they're a naked pair & we have no inner value to eliminate
-          if (a_0?.hintValues.length === 2 && a_1?.hintValues.length === 2)
-            break;
-          const referenceValues = [Number(hint1.hint), Number(hint2.hint)];
-          const modifiedCells = [a_0, a_1];
-          const removedValues = [
-            ...new Set([
-              ...a_0!.hintValues.filter(
-                (hint) => !referenceValues.includes(hint),
-              ),
-              ...a_1!.hintValues.filter(
-                (hint) => !referenceValues.includes(hint),
-              ),
-            ]),
-          ];
-          const elimination = {
-            referenceCells: [a_0, a_1],
-            referenceValues,
-            modifiedCells,
-            removedValues,
-          } as Elimination;
-          step.eliminations.push(elimination);
-        }
+        const { hint: hint1, cells: cells1 } = candidatePairs[i]!;
+        const { hint: hint2, cells: cells2 } = candidatePairs[j]!;
+        const uniqueCells = new Set([...cells1, ...cells2]);
+        if (uniqueCells.size !== 2) break;
+        const [a_0, a_1] = [...uniqueCells];
+        // if both cells only have 2 hint values, they're a naked pair & we have no inner value to eliminate
+        if (a_0?.hintValues.length === 2 && a_1?.hintValues.length === 2) break;
+        const referenceValues = [Number(hint1), Number(hint2)];
+        // only cells that have hint values that aren't part of the pair are modified
+        const modifiedCells = [a_0, a_1].filter(
+          (cell) =>
+            cell &&
+            cell.hintValues.some((hint) => referenceValues.includes(hint)),
+        );
+        const removedValues = [
+          ...new Set([
+            ...a_0!.hintValues.filter(
+              (hint) => !referenceValues.includes(hint),
+            ),
+            ...a_1!.hintValues.filter(
+              (hint) => !referenceValues.includes(hint),
+            ),
+          ]),
+        ];
+        const elimination = {
+          referenceCells: [a_0, a_1],
+          referenceValues,
+          modifiedCells,
+          removedValues,
+        } as Elimination;
+        step.eliminations.push(elimination);
       }
     }
   });

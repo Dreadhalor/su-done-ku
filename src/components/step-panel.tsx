@@ -7,6 +7,7 @@ import {
   nakedPairs,
   nakedTriples,
   hiddenPairs,
+  hiddenTriples,
   nakedQuads,
 } from '../utils';
 import { useState } from 'react';
@@ -54,6 +55,7 @@ const StepPanel = () => {
   const [useNakedPairs, setUseNakedPairs] = useState(false);
   const [useNakedTriples, setUseNakedTriples] = useState(false);
   const [useHiddenPairs, setUseHiddenPairs] = useState(false);
+  const [useHiddenTriples, setUseHiddenTriples] = useState(false);
   const [useNakedQuads, setUseNakedQuads] = useState(false);
   const advanceStep = () => {
     if (step) {
@@ -66,7 +68,9 @@ const StepPanel = () => {
         setStep(nakedTriples(board));
       } else if (step.type === 'nakedTriples' && useHiddenPairs) {
         setStep(hiddenPairs(board));
-      } else if (step.type === 'hiddenPairs' && useNakedQuads) {
+      } else if (step.type === 'hiddenPairs' && useHiddenTriples) {
+        setStep(hiddenTriples(board));
+      } else if (step.type === 'hiddenTriples' && useNakedQuads) {
         setStep(nakedQuads(board));
       } else setStep(null);
     } else if (useCrossHatch) setStep(crosshatch(board));
@@ -74,6 +78,7 @@ const StepPanel = () => {
     else if (useNakedPairs) setStep(nakedPairs(board));
     else if (useNakedTriples) setStep(nakedTriples(board));
     else if (useHiddenPairs) setStep(hiddenPairs(board));
+    else if (useHiddenTriples) setStep(hiddenTriples(board));
     else if (useNakedQuads) setStep(nakedQuads(board));
   };
   return (
@@ -108,6 +113,12 @@ const StepPanel = () => {
         checked={useHiddenPairs}
         name='Hidden Pairs'
         onCheckedChange={setUseHiddenPairs}
+      />
+      <StepControl
+        id='hiddenTriples'
+        checked={useHiddenTriples}
+        name='Hidden Triples'
+        onCheckedChange={setUseHiddenTriples}
       />
       <StepControl
         id='nakedQuads'
