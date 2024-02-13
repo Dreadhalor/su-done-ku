@@ -14,6 +14,7 @@ import {
   hiddenPair,
   nakedTriple,
   hiddenTriple,
+  hiddenQuad,
 } from './boards';
 import { StepPanel } from './components/step-panel';
 import { useBoard } from './providers/board-context';
@@ -25,7 +26,8 @@ type PresetPuzzle =
   | 'hiddenSingle'
   | 'nakedPair'
   | 'hiddenPair'
-  | 'hiddenTriple';
+  | 'hiddenTriple'
+  | 'hiddenQuad';
 
 // create a sudoku board with a 9x9 grid of cells, where each cell is a 3x3 grid of cells containing numbers 1-9
 function App() {
@@ -79,6 +81,9 @@ function App() {
       case 'hiddenTriple':
         setBoard(parseBoard(hiddenTriple));
         break;
+      case 'hiddenQuad':
+        setBoard(parseBoard(hiddenQuad));
+        break;
       default:
         break;
     }
@@ -102,6 +107,7 @@ function App() {
               <SelectItem value='nakedTriple'>Naked Triple</SelectItem>
               <SelectItem value='hiddenPair'>Hidden Pair</SelectItem>
               <SelectItem value='hiddenTriple'>Hidden Triple</SelectItem>
+              <SelectItem value='hiddenQuad'>Hidden Quad</SelectItem>
             </SelectContent>
           </Select>
           <Button

@@ -5,6 +5,7 @@ export * from './algorithms/naked-triples';
 export * from './algorithms/hidden-pairs';
 export * from './algorithms/hidden-triples';
 export * from './algorithms/naked-quads';
+export * from './algorithms/hidden-quads';
 
 export type Cell = {
   hintValues: CellValue[];

@@ -9,6 +9,7 @@ import {
   hiddenPairs,
   hiddenTriples,
   nakedQuads,
+  hiddenQuads,
 } from '../utils';
 import { useState } from 'react';
 import { cn } from '@repo/utils';
@@ -57,6 +58,7 @@ const StepPanel = () => {
   const [useHiddenPairs, setUseHiddenPairs] = useState(false);
   const [useHiddenTriples, setUseHiddenTriples] = useState(false);
   const [useNakedQuads, setUseNakedQuads] = useState(false);
+  const [useHiddenQuads, setUseHiddenQuads] = useState(false);
   const advanceStep = () => {
     if (step) {
       setBoard((prevBoard) => executeStep(prevBoard, step));
@@ -72,6 +74,8 @@ const StepPanel = () => {
         setStep(hiddenTriples(board));
       } else if (step.type === 'hiddenTriples' && useNakedQuads) {
         setStep(nakedQuads(board));
+      } else if (step.type === 'nakedQuads' && useHiddenQuads) {
+        setStep(hiddenQuads(board));
       } else setStep(null);
     } else if (useCrossHatch) setStep(crosshatch(board));
     else if (useHiddenSingles) setStep(hiddenSingles(board));
@@ -80,6 +84,7 @@ const StepPanel = () => {
     else if (useHiddenPairs) setStep(hiddenPairs(board));
     else if (useHiddenTriples) setStep(hiddenTriples(board));
     else if (useNakedQuads) setStep(nakedQuads(board));
+    else if (useHiddenQuads) setStep(hiddenQuads(board));
   };
   return (
     <div className='bg-background flex flex-col gap-2 rounded-sm border'>
@@ -125,6 +130,12 @@ const StepPanel = () => {
         checked={useNakedQuads}
         name='Naked Quads'
         onCheckedChange={setUseNakedQuads}
+      />
+      <StepControl
+        id='hiddenQuads'
+        checked={useHiddenQuads}
+        name='Hidden Quads'
+        onCheckedChange={setUseHiddenQuads}
       />
     </div>
   );
