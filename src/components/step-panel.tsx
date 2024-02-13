@@ -1,15 +1,12 @@
 import { Button, Checkbox, Label } from 'dread-ui';
 import { useBoard } from '../providers/board-context';
 import {
-  // crossHatch,
-  nakedSingles,
+  executeStep,
+  crosshatch,
   hiddenSingles,
   nakedPairs,
   nakedTriples,
-  hiddenPairs,
   nakedQuads,
-  crossHatchAsStep,
-  executeStep,
 } from '../utils';
 import { useState } from 'react';
 import { cn } from '@repo/utils';
@@ -58,35 +55,33 @@ const StepPanel = () => {
   const [useNakedTriples, setUseNakedTriples] = useState(false);
   const [useHiddenPairs, setUseHiddenPairs] = useState(false);
   const [useNakedQuads, setUseNakedQuads] = useState(false);
+  const advanceStep = () => {
+    if (step) {
+      setBoard((prevBoard) => executeStep(prevBoard, step));
+      if (step.type === 'crosshatch' && useHiddenSingles) {
+        setStep(hiddenSingles(board));
+      } else if (step.type === 'hiddenSingles' && useNakedPairs) {
+        setStep(nakedPairs(board));
+      } else if (step.type === 'nakedPairs' && useNakedTriples) {
+        setStep(nakedTriples(board));
+      } else if (step.type === 'nakedTriples' && useNakedQuads) {
+        setStep(nakedQuads(board));
+      } else setStep(null);
+    } else if (useCrossHatch) setStep(crosshatch(board));
+    else if (useHiddenSingles) setStep(hiddenSingles(board));
+    else if (useNakedPairs) setStep(nakedPairs(board));
+    else if (useNakedTriples) setStep(nakedTriples(board));
+    else if (useNakedQuads) setStep(nakedQuads(board));
+  };
   return (
     <div className='bg-background flex flex-col gap-2 rounded-sm border'>
-      <Button
-        onClick={() => {
-          if (step) {
-            setBoard(executeStep(board, step));
-            setStep(null);
-            return;
-          }
-          let newBoard = board;
-          if (useNakedSingle) newBoard = nakedSingles(newBoard);
-          // if (useCrossHatch) newBoard = crossHatch(newBoard);
-          if (useCrossHatch) setStep(crossHatchAsStep(newBoard));
-          if (useHiddenSingles) newBoard = hiddenSingles(newBoard);
-          if (useNakedPairs) newBoard = nakedPairs(newBoard);
-          if (useNakedTriples) newBoard = nakedTriples(newBoard);
-          if (useHiddenPairs) newBoard = hiddenPairs(newBoard);
-          if (useNakedQuads) newBoard = nakedQuads(newBoard);
-          setBoard(newBoard);
-        }}
-      >
-        Take step
-      </Button>
-      <StepControl
+      <Button onClick={() => advanceStep()}>Take step</Button>
+      {/* <StepControl
         id='nakedSingles'
         checked={useNakedSingle}
         name='Naked Singles'
         onCheckedChange={setUseNakedSingle}
-      />
+      /> */}
       <StepControl
         id='crosshatch'
         checked={useCrossHatch}
@@ -111,12 +106,12 @@ const StepPanel = () => {
         name='Naked Triples'
         onCheckedChange={setUseNakedTriples}
       />
-      <StepControl // buggy
+      {/* <StepControl // buggy
         id='hiddenPairs'
         checked={useHiddenPairs}
         name='Hidden Pairs'
         onCheckedChange={setUseHiddenPairs}
-      />
+      /> */}
       <StepControl
         id='nakedQuads'
         checked={useNakedQuads}

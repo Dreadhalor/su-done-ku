@@ -1,11 +1,11 @@
 import { createContext, useContext, useState } from 'react';
-import { Cell, Step2 } from '../utils';
+import { Cell, Step } from '../utils';
 
 type BoardContextType = {
   board: Cell[][];
   setBoard: React.Dispatch<React.SetStateAction<Cell[][]>>;
-  step: Step2 | null;
-  setStep: React.Dispatch<React.SetStateAction<Step2 | null>>;
+  step: Step | null;
+  setStep: React.Dispatch<React.SetStateAction<Step | null>>;
 };
 
 export const BoardContext = createContext<BoardContextType>(
@@ -25,7 +25,7 @@ type BoardProviderProps = {
 };
 export const BoardProvider = ({ children }: BoardProviderProps) => {
   const [board, setBoard] = useState<Cell[][]>([[]]);
-  const [step, setStep] = useState<Step2 | null>(null);
+  const [step, setStep] = useState<Step | null>(null);
   return (
     <BoardContext.Provider value={{ board, setBoard, step, setStep }}>
       {children}

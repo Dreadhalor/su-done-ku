@@ -26,7 +26,6 @@ function App() {
       Array.from({ length: 9 }).map(
         (_, columnIndex) =>
           ({
-            value: null,
             hintValues: [1, 2, 3, 4, 5, 6, 7, 8, 9],
             rowIndex,
             columnIndex,
@@ -37,8 +36,8 @@ function App() {
       ),
     );
 
-    newBoard[4]![5]!.value = 1;
-    newBoard[2]![2]!.value = 4;
+    newBoard[4]![5]!.hintValues = [1];
+    newBoard[2]![2]!.hintValues = [4];
 
     setBoard(newBoard);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
