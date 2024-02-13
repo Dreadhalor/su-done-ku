@@ -6,6 +6,7 @@ import {
   hiddenSingles,
   nakedPairs,
   nakedTriples,
+  hiddenPairs,
   nakedQuads,
 } from '../utils';
 import { useState } from 'react';
@@ -48,7 +49,6 @@ const StepControl = ({
 
 const StepPanel = () => {
   const { board, setBoard, step, setStep } = useBoard();
-  const [useNakedSingle, setUseNakedSingle] = useState(false);
   const [useCrossHatch, setUseCrossHatch] = useState(true);
   const [useHiddenSingles, setUseHiddenSingles] = useState(false);
   const [useNakedPairs, setUseNakedPairs] = useState(false);
@@ -64,24 +64,21 @@ const StepPanel = () => {
         setStep(nakedPairs(board));
       } else if (step.type === 'nakedPairs' && useNakedTriples) {
         setStep(nakedTriples(board));
-      } else if (step.type === 'nakedTriples' && useNakedQuads) {
+      } else if (step.type === 'nakedTriples' && useHiddenPairs) {
+        setStep(hiddenPairs(board));
+      } else if (step.type === 'hiddenPairs' && useNakedQuads) {
         setStep(nakedQuads(board));
       } else setStep(null);
     } else if (useCrossHatch) setStep(crosshatch(board));
     else if (useHiddenSingles) setStep(hiddenSingles(board));
     else if (useNakedPairs) setStep(nakedPairs(board));
     else if (useNakedTriples) setStep(nakedTriples(board));
+    else if (useHiddenPairs) setStep(hiddenPairs(board));
     else if (useNakedQuads) setStep(nakedQuads(board));
   };
   return (
     <div className='bg-background flex flex-col gap-2 rounded-sm border'>
       <Button onClick={() => advanceStep()}>Take step</Button>
-      {/* <StepControl
-        id='nakedSingles'
-        checked={useNakedSingle}
-        name='Naked Singles'
-        onCheckedChange={setUseNakedSingle}
-      /> */}
       <StepControl
         id='crosshatch'
         checked={useCrossHatch}
@@ -106,12 +103,12 @@ const StepPanel = () => {
         name='Naked Triples'
         onCheckedChange={setUseNakedTriples}
       />
-      {/* <StepControl // buggy
+      <StepControl
         id='hiddenPairs'
         checked={useHiddenPairs}
         name='Hidden Pairs'
         onCheckedChange={setUseHiddenPairs}
-      /> */}
+      />
       <StepControl
         id='nakedQuads'
         checked={useNakedQuads}

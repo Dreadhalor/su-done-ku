@@ -2,6 +2,7 @@ export * from './algorithms/crosshatch';
 export * from './algorithms/hidden-singles';
 export * from './algorithms/naked-pairs';
 export * from './algorithms/naked-triples';
+export * from './algorithms/hidden-pairs';
 export * from './algorithms/naked-quads';
 
 export type Cell = {
@@ -97,17 +98,6 @@ export const executeStep = (board: Cell[][], step: Step) => {
   });
   return [...board];
 };
-
-// export const hiddenPairs = (board: Cell2[][]) => {
-//   const step: Step = {
-//     type: 'hiddenPairs',
-//     boardSnapshot: JSON.parse(JSON.stringify(board)),
-//     eliminations: [],
-//   };
-//   const regions = getRegions(board);
-//   regions.forEach(({ cells }) => {});
-//   return step;
-// };
 
 export const parseBoard = (board: number[][]) =>
   board.map((row, rowIndex) =>
