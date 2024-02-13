@@ -38,6 +38,7 @@ function App() {
     );
 
     newBoard[4]![5]!.value = 1;
+    newBoard[2]![2]!.value = 4;
 
     setBoard(newBoard);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps

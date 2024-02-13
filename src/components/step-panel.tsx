@@ -1,15 +1,18 @@
 import { Button, Checkbox, Label } from 'dread-ui';
 import { useBoard } from '../providers/board-context';
 import {
-  crossHatch,
+  // crossHatch,
   nakedSingles,
   hiddenSingles,
   nakedPairs,
   nakedTriples,
   hiddenPairs,
   nakedQuads,
+  crossHatchAsStep,
+  executeStep,
 } from '../utils';
 import { useState } from 'react';
+import { cn } from '@repo/utils';
 
 type StepControlProps = {
   id: string;
@@ -23,8 +26,15 @@ const StepControl = ({
   name,
   onCheckedChange,
 }: StepControlProps) => {
+  const { step } = useBoard();
+
   return (
-    <div className='flex flex-nowrap gap-2'>
+    <div
+      className={cn(
+        'flex flex-nowrap gap-2',
+        step?.type === id && 'bg-yellow-200',
+      )}
+    >
       <Checkbox
         id={id}
         checked={checked}
@@ -40,11 +50,11 @@ const StepControl = ({
 };
 
 const StepPanel = () => {
-  const { board, setBoard } = useBoard();
-  const [useNakedSingle, setUseNakedSingle] = useState(true);
+  const { board, setBoard, step, setStep } = useBoard();
+  const [useNakedSingle, setUseNakedSingle] = useState(false);
   const [useCrossHatch, setUseCrossHatch] = useState(true);
-  const [useHiddenSingles, setUseHiddenSingles] = useState(true);
-  const [useNakedPairs, setUseNakedPairs] = useState(true);
+  const [useHiddenSingles, setUseHiddenSingles] = useState(false);
+  const [useNakedPairs, setUseNakedPairs] = useState(false);
   const [useNakedTriples, setUseNakedTriples] = useState(false);
   const [useHiddenPairs, setUseHiddenPairs] = useState(false);
   const [useNakedQuads, setUseNakedQuads] = useState(false);
@@ -52,9 +62,15 @@ const StepPanel = () => {
     <div className='bg-background flex flex-col gap-2 rounded-sm border'>
       <Button
         onClick={() => {
+          if (step) {
+            setBoard(executeStep(board, step));
+            setStep(null);
+            return;
+          }
           let newBoard = board;
           if (useNakedSingle) newBoard = nakedSingles(newBoard);
-          if (useCrossHatch) newBoard = crossHatch(newBoard);
+          // if (useCrossHatch) newBoard = crossHatch(newBoard);
+          if (useCrossHatch) setStep(crossHatchAsStep(newBoard));
           if (useHiddenSingles) newBoard = hiddenSingles(newBoard);
           if (useNakedPairs) newBoard = nakedPairs(newBoard);
           if (useNakedTriples) newBoard = nakedTriples(newBoard);
@@ -72,7 +88,7 @@ const StepPanel = () => {
         onCheckedChange={setUseNakedSingle}
       />
       <StepControl
-        id='crossHatch'
+        id='crosshatch'
         checked={useCrossHatch}
         name='Crosshatch'
         onCheckedChange={setUseCrossHatch}

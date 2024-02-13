@@ -12,6 +12,28 @@ export type Region = {
 };
 export type CellValue = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 type CellValueString = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
+export type Elimination = {
+  boardSnapshot: Cell[][];
+  type: string;
+  referenceCells: Cell[];
+  modifiedCells: Cell[];
+  removedValues: CellValue[];
+};
+export type Step = {
+  type: string;
+  eliminations: Elimination[];
+};
+export type Elimination2 = {
+  referenceCells: Cell[];
+  modifiedCells: Cell[];
+  referenceValues: CellValue[];
+  removedValues: CellValue[];
+};
+export type Step2 = {
+  type: string;
+  boardSnapshot: Cell[][];
+  eliminations: Elimination2[];
+};
 
 const getRow = (cell: Cell, board: Cell[][]) => board[cell.rowIndex] || [];
 const getRowFromIndex = (rowIndex: number, board: Cell[][]) =>
@@ -51,12 +73,15 @@ const getRegions = (board: Cell[][]) => {
   return regions;
 };
 
-type Elimination = {
-  boardSnapshot: Cell[][];
-  type: string;
-  referenceCells: Cell[];
-  modifiedCells: Cell[];
-  removedValues: CellValue[];
+export const executeStep = (board: Cell[][], step: Step2) => {
+  step.eliminations.forEach((elimination) => {
+    elimination.modifiedCells.forEach((cell, index) => {
+      cell.hintValues = cell.hintValues.filter(
+        (hint) => hint !== elimination.removedValues[index],
+      );
+    });
+  });
+  return [...board];
 };
 
 // look at every cell with a value and remove that value from the hintValues of every cell in the same row, column, and 3x3 grid
@@ -92,6 +117,61 @@ export const crossHatch = (board: Cell[][]) => {
   });
 
   return [...board];
+};
+
+// look at every cell with a value and remove that value from the hintValues of every cell in the same row, column, and 3x3 grid
+export const crossHatchAsStep = (board: Cell[][]) => {
+  const step: Step2 = {
+    type: 'crosshatch',
+    boardSnapshot: JSON.parse(JSON.stringify(board)),
+    eliminations: [],
+  };
+  // get all the cells with a value
+  const cellsWithValue = board
+    .map((row) => row.filter((cell) => cell.value !== null))
+    .flat();
+  // for each cell with a value, remove that value from the hintValues of every cell in the same row, column, and 3x3 box
+  cellsWithValue.forEach((cell) => {
+    const { value } = cell;
+    const row = getRow(cell, board);
+    const column = getColumn(cell, board);
+    const box = getBox(cell, board);
+
+    const elimination: Elimination2 = {
+      referenceCells: [cell],
+      referenceValues: [value],
+      modifiedCells: [],
+      removedValues: [],
+    };
+
+    row.forEach((cell) => {
+      if (cell.value === null && cell.hintValues.includes(value)) {
+        // cell.hintValues = cell.hintValues.filter((hint) => hint !== value);
+        elimination.modifiedCells.push(cell);
+        elimination.removedValues.push(value);
+      }
+    });
+
+    column.forEach((cell) => {
+      if (cell?.value === null && cell.hintValues.includes(value)) {
+        // cell.hintValues = cell.hintValues.filter((hint) => hint !== value);
+        elimination.modifiedCells.push(cell);
+        elimination.removedValues.push(value);
+      }
+    });
+
+    box.forEach((cell) => {
+      if (cell.value === null && cell.hintValues.includes(value)) {
+        // cell.hintValues = cell.hintValues.filter((hint) => hint !== value);
+        elimination.modifiedCells.push(cell);
+        elimination.removedValues.push(value);
+      }
+    });
+
+    if (elimination.modifiedCells.length > 0)
+      step.eliminations.push(elimination);
+  });
+  return step;
 };
 
 // look at every cell with only one possible value and fill in that value

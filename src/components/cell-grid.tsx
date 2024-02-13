@@ -1,7 +1,5 @@
-import { cn } from '@repo/utils';
 import { useBoard } from '../providers/board-context';
-import { Button } from 'dread-ui';
-import { CellValue } from '../utils';
+import { Cell } from './cell';
 
 const GridTopAndBottom = () => {
   return (
@@ -27,7 +25,9 @@ const GridLeftAndRight = ({ index }: { index: number }) => {
 };
 
 const CellGrid = () => {
-  const { board, setBoard } = useBoard();
+  const { board, step } = useBoard();
+  const { eliminations } = step || { eliminations: [] };
+
   return (
     <div className='flex flex-col'>
       <GridTopAndBottom />
@@ -35,45 +35,7 @@ const CellGrid = () => {
         <div key={rowIndex} className='flex flex-nowrap'>
           <GridLeftAndRight index={rowIndex} />
           {row.map((cell, cellIndex) => (
-            <div
-              key={cellIndex}
-              className={cn(
-                'bg-background relative h-12 w-12 items-center justify-center border border-black',
-                cell.value ? 'text-black' : 'text-gray-400',
-                cell.value
-                  ? 'flex'
-                  : 'grid grid-cols-3 grid-rows-3 place-items-center',
-                cell.rowIndex % 3 === 2 && cell.rowIndex < 8 && 'border-b-4',
-                cell.columnIndex % 3 === 2 &&
-                  cell.columnIndex < 8 &&
-                  'border-r-4',
-              )}
-            >
-              {/* <div className='absolute right-0 top-0 text-xs'>
-                  {cell.rowIndex}, {cell.columnIndex}
-                </div> */}
-              {cell.value && cell.value}
-              {!cell.value &&
-                Array.from({ length: 9 }).map((_, index) => (
-                  <Button
-                    key={index}
-                    variant='ghost'
-                    className='h-4 w-4 rounded-none p-0 text-xs'
-                    onClick={() => {
-                      cell.hintValues = cell.hintValues.includes(
-                        (index + 1) as CellValue,
-                      )
-                        ? cell.hintValues.filter((hint) => hint !== index + 1)
-                        : [...cell.hintValues, (index + 1) as CellValue];
-                      setBoard([...board]);
-                    }}
-                  >
-                    {cell.hintValues.includes((index + 1) as CellValue)
-                      ? index + 1
-                      : ''}
-                  </Button>
-                ))}
-            </div>
+            <Cell key={cellIndex} cell={cell} eliminations={eliminations} />
           ))}
           <GridLeftAndRight index={rowIndex} />
         </div>
