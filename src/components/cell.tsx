@@ -11,7 +11,7 @@ const CellComponent = ({ cell, eliminations }: CellProps) => {
   const { rowIndex, columnIndex, hintValues } = cell;
   const { board, setBoard, step } = useBoard();
   const value = cell.hintValues.length === 1 ? cell.hintValues[0] : null;
-  if (rowIndex === 0 && columnIndex === 0) console.log(eliminations);
+  // if (rowIndex === 0 && columnIndex === 0) console.log(eliminations);
 
   const relevantEliminations = eliminations
     .filter((elimination) =>

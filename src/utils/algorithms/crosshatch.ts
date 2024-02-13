@@ -56,3 +56,7 @@ export const crosshatch = (board: Cell[][]) => {
   });
   return step;
 };
+
+export const formatCrosshatch = (step: Step) => {
+  return `Crosshatch: ${step.eliminations.length} eliminations`;
+};

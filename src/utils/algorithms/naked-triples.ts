@@ -45,7 +45,6 @@ export const nakedTriples = (board: Cell[][]) => {
       .filter((c) => !cells.includes(c))
       .filter((c) => c.hintValues.some((hint) => hintValues.includes(hint)));
     if (modifiedCells.length > 0) {
-      console.log('modifiedCells', modifiedCells, 'hintValues', hintValues);
       const elimination: Elimination = {
         referenceCells: cells,
         referenceValues: hintValues,

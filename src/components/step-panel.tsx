@@ -1,16 +1,6 @@
 import { Button, Checkbox, Label } from 'dread-ui';
 import { useBoard } from '../providers/board-context';
-import {
-  executeStep,
-  crosshatch,
-  hiddenSingles,
-  nakedPairs,
-  nakedTriples,
-  hiddenPairs,
-  hiddenTriples,
-  nakedQuads,
-  hiddenQuads,
-} from '../utils';
+import { executeStep, strategies } from '../utils';
 import { useState } from 'react';
 import { cn } from '@repo/utils';
 
@@ -51,6 +41,16 @@ const StepControl = ({
 
 const StepPanel = () => {
   const { board, setBoard, step, setStep } = useBoard();
+  const {
+    crosshatch,
+    hiddenSingles,
+    nakedPairs,
+    nakedTriples,
+    hiddenPairs,
+    hiddenTriples,
+    nakedQuads,
+    hiddenQuads,
+  } = strategies;
   const [useCrossHatch, setUseCrossHatch] = useState(true);
   const [useHiddenSingles, setUseHiddenSingles] = useState(false);
   const [useNakedPairs, setUseNakedPairs] = useState(false);

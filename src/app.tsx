@@ -20,6 +20,7 @@ import { StepPanel } from './components/step-panel';
 import { useBoard } from './providers/board-context';
 import { FaCheck } from 'react-icons/fa';
 import { CellGrid } from './components/cell-grid';
+import { StepDescriptionPanel } from './components/step-description-panel';
 
 type PresetPuzzle =
   | 'nakedTriple'
@@ -93,7 +94,7 @@ function App() {
     <div className='flex h-full w-full items-center justify-center gap-4 border-4 border-white text-black'>
       <div className='flex flex-col gap-2'>
         <CellGrid />
-        <div className='h-24 rounded-md bg-white'></div>
+        <StepDescriptionPanel />
       </div>
       <div className='flex flex-col gap-4'>
         <div className='flex flex-nowrap'>

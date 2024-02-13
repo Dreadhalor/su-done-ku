@@ -1,11 +1,4 @@
-export * from './algorithms/crosshatch';
-export * from './algorithms/hidden-singles';
-export * from './algorithms/naked-pairs';
-export * from './algorithms/naked-triples';
-export * from './algorithms/hidden-pairs';
-export * from './algorithms/hidden-triples';
-export * from './algorithms/naked-quads';
-export * from './algorithms/hidden-quads';
+export * from './algorithms';
 
 export type Cell = {
   hintValues: CellValue[];

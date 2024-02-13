@@ -37,3 +37,16 @@ export const hiddenSingles = (board: Cell[][]) => {
   });
   return step;
 };
+
+export const formatHiddenSingles = (step: Step) => {
+  const { eliminations } = step;
+  if (eliminations.length === 0) return '';
+  const elimination = eliminations[0];
+  const { referenceCells, referenceValues, removedValues } = elimination;
+  const cell = referenceCells[0];
+  const value = referenceValues[0];
+  const removedValue = removedValues[0];
+  return `The cell at row ${cell.rowIndex + 1}, column ${
+    cell.columnIndex + 1
+  } can only be ${value} so we can remove ${removedValue} from the hint values.`;
+};
