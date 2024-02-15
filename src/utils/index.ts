@@ -1,3 +1,5 @@
+import { flatMap, groupBy, map } from 'lodash';
+
 export * from './algorithms';
 
 export type Cell = {
@@ -64,7 +66,7 @@ export const getBoxMinusCell = (cell: Cell, board: Board) =>
   getBox(cell, board).filter(
     (c) => c.rowIndex !== cell.rowIndex || c.columnIndex !== cell.columnIndex,
   );
-const getBoxFromIndex = (boxIndex: number, board: Board) => {
+export const getBoxFromIndex = (boxIndex: number, board: Board) => {
   const rowIndex = Math.floor(boxIndex / 3) * 3;
   const columnIndex = (boxIndex % 3) * 3;
   return board
@@ -127,25 +129,31 @@ export const parseBoard = (board: number[][]) =>
 export const sortCells = (a: Cell, b: Cell | undefined) =>
   b ? 10 * (a.rowIndex - b.rowIndex) + (a.columnIndex - b.columnIndex) : -1;
 
+export type HintCounts = {
+  hint: CellValue;
+  cells: Cell[];
+}[];
 export const countHintValues = (cells: Cell[]) => {
-  const hintValueMap: Record<string, Cell[]> = {};
-  cells.forEach((cell) => {
-    const hintValues = cell.hintValues.map((hint) => `${hint}`);
-    hintValues.forEach((hint) => {
-      if (!hintValueMap[hint]) hintValueMap[hint] = [];
-      const cellsWithHint = hintValueMap[hint];
-      if (cellsWithHint) cellsWithHint.push(cell);
-    });
-  });
-  return hintValueMap;
+  // Step 1: Flatten the array into an array of { hint, cell } objects
+  const flattenedHints = flatMap(cells, (cell) =>
+    cell.hintValues.map((hint) => ({ hint, cell })),
+  );
+  // Step 2: Group by 'hint'
+  const hintCounts = groupBy(flattenedHints, 'hint');
+  // Step 3: Merge + transform into HintCounts
+  const result = map(hintCounts, (hintObjects, hint) => ({
+    hint: Number(hint) as CellValue,
+    cells: hintObjects.map(({ cell }) => cell),
+  })) satisfies HintCounts;
+  return result;
 };
 
 export const filterHintCounts = (cells: Cell[], counts: number[]) => {
   const hintCounts = countHintValues(cells);
-  return Object.keys(hintCounts)
-    .filter((hint) => counts.includes(hintCounts[hint]!.length))
-    .map((hint) => ({
-      hint: Number(hint) as CellValue,
-      cells: hintCounts[hint]!,
-    }));
+  return hintCounts.filter((hintCount) =>
+    counts.includes(hintCount.cells.length),
+  );
 };
+
+export const convertBoardToSnapshot = (board: Cell[][]) =>
+  board.map((row) => row.map((cell) => cell.hintValues));

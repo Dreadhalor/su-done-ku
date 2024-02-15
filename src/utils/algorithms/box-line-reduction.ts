@@ -1,5 +1,5 @@
 import { groupBy } from 'lodash';
-import { Cell, Step, filterHintCounts, getLines } from '..';
+import { Cell, Step, filterHintCounts, getLines, getBoxFromIndex } from '..';
 
 export const boxLineReduction = (board: Cell[][]) => {
   const step: Step = {
@@ -12,7 +12,21 @@ export const boxLineReduction = (board: Cell[][]) => {
     const candidateValues = filterHintCounts(line, [2, 3]);
     candidateValues.forEach(({ hint, cells }) => {
       const boxes = groupBy(cells, (cell) => cell.boxIndex);
-      console.log(boxes);
+      const boxIndices = Object.keys(boxes).map(Number);
+      if (boxIndices.length === 1) {
+        // potential box/line reduction
+        const boxIndex = boxIndices[0]!;
+        const modifiedCells = getBoxFromIndex(boxIndex, board)
+          .filter((cell) => !cells.includes(cell))
+          .filter((cell) => cell.hintValues.includes(hint));
+        if (modifiedCells.length === 0) return;
+        step.eliminations.push({
+          referenceCells: cells,
+          referenceValues: [hint],
+          modifiedCells,
+          removedValues: [hint],
+        });
+      }
     });
   });
   return step;

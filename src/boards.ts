@@ -10,7 +10,7 @@
 //   [0, 0, 0, 0, 0, 0, 0, 0, 0],
 // ];
 
-export const hiddenSingle = [
+export const hiddenSinglePuzzle = [
   // also has naked quad
   [0, 0, 9, 0, 3, 2, 0, 0, 0],
   [0, 0, 0, 7, 0, 0, 0, 0, 0],
@@ -23,7 +23,7 @@ export const hiddenSingle = [
   [0, 0, 5, 8, 7, 0, 0, 0, 0],
 ];
 
-export const nakedPair = [
+export const nakedPairPuzzle = [
   [4, 0, 0, 0, 0, 0, 0, 3, 8],
   [0, 0, 2, 0, 0, 4, 1, 0, 0],
   [0, 0, 5, 3, 0, 0, 2, 4, 0],
@@ -35,7 +35,7 @@ export const nakedPair = [
   [2, 4, 0, 0, 0, 0, 0, 0, 9],
 ];
 
-export const nakedTriple = [
+export const nakedTriplePuzzle = [
   [0, 7, 0, 4, 0, 8, 0, 2, 9],
   [0, 0, 2, 0, 0, 0, 0, 0, 4],
   [8, 5, 4, 0, 2, 0, 0, 0, 7],
@@ -47,7 +47,7 @@ export const nakedTriple = [
   [1, 3, 0, 6, 4, 2, 0, 7, 0],
 ];
 
-export const hiddenPair = [
+export const hiddenPairPuzzle = [
   [0, 0, 0, 0, 0, 0, 0, 0, 0],
   [9, 0, 4, 6, 0, 7, 0, 0, 0],
   [0, 7, 6, 8, 0, 4, 1, 0, 0],
@@ -59,7 +59,7 @@ export const hiddenPair = [
   [0, 0, 0, 0, 0, 0, 0, 0, 0],
 ];
 
-export const hiddenTriple = [
+export const hiddenTriplePuzzle = [
   [0, 0, 0, 0, 0, 0, 0, 0, 0],
   [2, 3, 1, 0, 9, 0, 0, 0, 0],
   [0, 6, 5, 0, 0, 3, 1, 0, 0],
@@ -71,7 +71,7 @@ export const hiddenTriple = [
   [0, 0, 0, 0, 0, 0, 0, 0, 0],
 ];
 
-export const hiddenQuad = [
+export const hiddenQuadPuzzle = [
   [9, 0, 1, 5, 0, 0, 0, 4, 6],
   [4, 2, 5, 0, 9, 0, 0, 8, 1],
   [8, 6, 0, 0, 1, 0, 0, 2, 0],
@@ -83,7 +83,7 @@ export const hiddenQuad = [
   [0, 0, 0, 0, 0, 1, 6, 9, 4],
 ];
 
-export const pointingPair = [
+export const pointingPairPuzzle = [
   [0, 3, 2, 0, 0, 6, 1, 0, 0],
   [4, 1, 0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 9, 0, 1, 0, 0, 0],
@@ -95,16 +95,7 @@ export const pointingPair = [
   [0, 5, 7, 0, 0, 9, 8, 6, 0],
 ];
 
-export const pointingTriple = [
-  // 930050000
-  // 200630095
-  // 856002000
-  // 003180570
-  // 005020980
-  // 080005000
-  // 000800159
-  // 508210004
-  // 000560008
+export const pointingTriplePuzzle = [
   [9, 3, 0, 0, 5, 0, 0, 0, 0],
   [2, 0, 0, 6, 3, 0, 0, 9, 5],
   [8, 5, 6, 0, 0, 2, 0, 0, 0],
@@ -114,4 +105,16 @@ export const pointingTriple = [
   [0, 0, 0, 8, 0, 0, 1, 5, 9],
   [5, 0, 8, 2, 1, 0, 0, 0, 4],
   [0, 0, 0, 5, 6, 0, 0, 0, 8],
+];
+
+export const boxLineReductionPuzzle = [
+  [0, 1, 6, 0, 0, 7, 8, 0, 3],
+  [0, 9, 2, 8, 0, 0, 0, 0, 0],
+  [8, 7, 0, 0, 0, 1, 2, 6, 0],
+  [0, 4, 8, 0, 0, 0, 3, 0, 0],
+  [6, 5, 0, 0, 0, 9, 0, 8, 2],
+  [0, 3, 9, 0, 0, 0, 6, 5, 0],
+  [0, 6, 0, 9, 0, 0, 0, 2, 0],
+  [0, 8, 0, 0, 0, 2, 9, 3, 6],
+  [9, 2, 4, 6, 0, 0, 5, 1, 0],
 ];

@@ -53,6 +53,7 @@ const StepPanel = () => {
     hiddenQuads: false,
     pointingPairs: false,
     pointingTriples: false,
+    boxLineReduction: false,
   });
   const handleStrategyChange = (strategy: string) => (checked: boolean) => {
     setStrategyStates((prev) => ({ ...prev, [strategy]: checked }));

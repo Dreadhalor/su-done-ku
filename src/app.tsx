@@ -7,16 +7,17 @@ import {
   SelectValue,
 } from 'dread-ui';
 import { useEffect, useState } from 'react';
-import { Cell, parseBoard } from './utils';
+import { Cell, convertBoardToSnapshot, parseBoard } from './utils';
 import {
-  hiddenSingle,
-  nakedPair,
-  hiddenPair,
-  nakedTriple,
-  hiddenTriple,
-  hiddenQuad,
-  pointingPair,
-  pointingTriple,
+  hiddenSinglePuzzle,
+  nakedPairPuzzle,
+  hiddenPairPuzzle,
+  nakedTriplePuzzle,
+  hiddenTriplePuzzle,
+  hiddenQuadPuzzle,
+  pointingPairPuzzle,
+  pointingTriplePuzzle,
+  boxLineReductionPuzzle,
 } from './boards';
 import { StepPanel } from './components/step-panel';
 import { useBoard } from './providers/board-context';
@@ -32,11 +33,12 @@ type PresetPuzzle =
   | 'hiddenTriple'
   | 'hiddenQuad'
   | 'pointingPair'
-  | 'pointingTriple';
+  | 'pointingTriple'
+  | 'boxLineReduction';
 
 // create a sudoku board with a 9x9 grid of cells, where each cell is a 3x3 grid of cells containing numbers 1-9
 function App() {
-  const { setBoard } = useBoard();
+  const { board, setBoard } = useBoard();
   const [sudokuToLoad, setSudokuToLoad] = useState<string>('');
 
   useEffect(() => {
@@ -72,28 +74,31 @@ function App() {
   const loadPuzzle = (puzzle: PresetPuzzle) => {
     switch (puzzle) {
       case 'hiddenSingle':
-        setBoard(parseBoard(hiddenSingle));
+        setBoard(parseBoard(hiddenSinglePuzzle));
         break;
       case 'nakedPair':
-        setBoard(parseBoard(nakedPair));
+        setBoard(parseBoard(nakedPairPuzzle));
         break;
       case 'nakedTriple':
-        setBoard(parseBoard(nakedTriple));
+        setBoard(parseBoard(nakedTriplePuzzle));
         break;
       case 'hiddenPair':
-        setBoard(parseBoard(hiddenPair));
+        setBoard(parseBoard(hiddenPairPuzzle));
         break;
       case 'hiddenTriple':
-        setBoard(parseBoard(hiddenTriple));
+        setBoard(parseBoard(hiddenTriplePuzzle));
         break;
       case 'hiddenQuad':
-        setBoard(parseBoard(hiddenQuad));
+        setBoard(parseBoard(hiddenQuadPuzzle));
         break;
       case 'pointingPair':
-        setBoard(parseBoard(pointingPair));
+        setBoard(parseBoard(pointingPairPuzzle));
         break;
       case 'pointingTriple':
-        setBoard(parseBoard(pointingTriple));
+        setBoard(parseBoard(pointingTriplePuzzle));
+        break;
+      case 'boxLineReduction':
+        setBoard(parseBoard(boxLineReductionPuzzle));
         break;
       default:
         break;
@@ -109,7 +114,7 @@ function App() {
       <div className='flex flex-col gap-4'>
         <div className='flex flex-nowrap'>
           <Select value={sudokuToLoad} onValueChange={setSudokuToLoad}>
-            <SelectTrigger className='w-[150px]'>
+            <SelectTrigger className='w-[200px]'>
               <SelectValue placeholder='Load sudoku'></SelectValue>
             </SelectTrigger>
             <SelectContent>
@@ -121,6 +126,9 @@ function App() {
               <SelectItem value='hiddenQuad'>Hidden Quad</SelectItem>
               <SelectItem value='pointingPair'>Pointing Pair</SelectItem>
               <SelectItem value='pointingTriple'>Pointing Triple</SelectItem>
+              <SelectItem value='boxLineReduction'>
+                Box/Line Reduction
+              </SelectItem>
             </SelectContent>
           </Select>
           <Button
@@ -131,6 +139,9 @@ function App() {
           </Button>
         </div>
         <StepPanel />
+        <Button onClick={() => console.log(convertBoardToSnapshot(board))}>
+          Export board
+        </Button>
       </div>
     </div>
   );
