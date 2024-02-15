@@ -15,7 +15,7 @@ export const pointingPairs = (board: Cell[][]) => {
   };
   const boxes = getBoxes(board);
   boxes.forEach((box) => {
-    const candidatePairs = filterHintCounts(box, 2);
+    const candidatePairs = filterHintCounts(box, [2]);
     candidatePairs.forEach(({ hint, cells: [cell_a, cell_b] }) => {
       if (!cell_a || !cell_b) return;
       if (cell_a.columnIndex === cell_b.columnIndex) {

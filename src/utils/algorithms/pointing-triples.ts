@@ -15,7 +15,7 @@ export const pointingTriples = (board: Cell[][]) => {
   };
   const boxes = getBoxes(board);
   boxes.forEach((box) => {
-    const candidateTriples = filterHintCounts(box, 3);
+    const candidateTriples = filterHintCounts(box, [3]);
     candidateTriples.forEach(({ hint, cells: [cell_a, cell_b, cell_c] }) => {
       if (!cell_a || !cell_b || !cell_c) return;
       if (

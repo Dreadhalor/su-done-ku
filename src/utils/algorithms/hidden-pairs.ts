@@ -9,7 +9,7 @@ export const hiddenPairs = (board: Cell[][]) => {
   const regions = getRegions(board);
   regions.forEach(({ cells }) => {
     // any hint value with more or less than 2 cells can't be part of a hidden pair, so we can ignore it
-    const candidatePairs = filterHintCounts(cells, 2);
+    const candidatePairs = filterHintCounts(cells, [2]);
     for (let i = 0; i < candidatePairs.length - 1; i++) {
       for (let j = i + 1; j < candidatePairs.length; j++) {
         const { hint: hint1, cells: cells1 } = candidatePairs[i]!;

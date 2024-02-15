@@ -79,6 +79,14 @@ export const getBoxes = (board: Board) => {
   }
   return boxes;
 };
+export const getLines = (board: Board) => {
+  const lines: Cell[][] = [];
+  for (let i = 0; i < 9; i++) {
+    lines.push(getRowFromIndex(i, board));
+    lines.push(getColumnFromIndex(i, board));
+  }
+  return lines;
+};
 export const getRegions = (board: Board) => {
   const regions: Region[] = [];
   for (let i = 0; i < 9; i++) {
@@ -132,10 +140,10 @@ export const countHintValues = (cells: Cell[]) => {
   return hintValueMap;
 };
 
-export const filterHintCounts = (cells: Cell[], count: number) => {
+export const filterHintCounts = (cells: Cell[], counts: number[]) => {
   const hintCounts = countHintValues(cells);
   return Object.keys(hintCounts)
-    .filter((hint) => hintCounts[hint]!.length === count)
+    .filter((hint) => counts.includes(hintCounts[hint]!.length))
     .map((hint) => ({
       hint: Number(hint) as CellValue,
       cells: hintCounts[hint]!,

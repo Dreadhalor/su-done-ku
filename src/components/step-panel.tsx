@@ -3,6 +3,7 @@ import { useBoard } from '../providers/board-context';
 import { executeStep, strategies } from '../utils';
 import { useState } from 'react';
 import { cn } from '@repo/utils';
+import { Strategy } from '../utils/algorithms';
 
 type StepControlProps = {
   id: string;
@@ -41,124 +42,54 @@ const StepControl = ({
 
 const StepPanel = () => {
   const { board, setBoard, step, setStep } = useBoard();
-  const {
-    crosshatch,
-    hiddenSingles,
-    nakedPairs,
-    nakedTriples,
-    hiddenPairs,
-    hiddenTriples,
-    nakedQuads,
-    hiddenQuads,
-    pointingPairs,
-    pointingTriples,
-  } = strategies;
-  const [useCrossHatch, setUseCrossHatch] = useState(true);
-  const [useHiddenSingles, setUseHiddenSingles] = useState(false);
-  const [useNakedPairs, setUseNakedPairs] = useState(false);
-  const [useNakedTriples, setUseNakedTriples] = useState(false);
-  const [useHiddenPairs, setUseHiddenPairs] = useState(false);
-  const [useHiddenTriples, setUseHiddenTriples] = useState(false);
-  const [useNakedQuads, setUseNakedQuads] = useState(false);
-  const [useHiddenQuads, setUseHiddenQuads] = useState(false);
-  const [usePointingPairs, setUsePointingPairs] = useState(false);
-  const [usePointingTriples, setUsePointingTriples] = useState(false);
+  const [strategyStates, setStrategyStates] = useState({
+    crosshatch: true,
+    hiddenSingles: false,
+    nakedPairs: false,
+    nakedTriples: false,
+    hiddenPairs: false,
+    hiddenTriples: false,
+    nakedQuads: false,
+    hiddenQuads: false,
+    pointingPairs: false,
+    pointingTriples: false,
+  });
+  const handleStrategyChange = (strategy: string) => (checked: boolean) => {
+    setStrategyStates((prev) => ({ ...prev, [strategy]: checked }));
+  };
+
   const advanceStep = () => {
+    const strategyOrder = Object.keys(strategyStates);
+    const currentStrategyIndex = strategyOrder.indexOf(step?.type || '');
+    const nextStrategy = strategyOrder.find(
+      (strategy, index) =>
+        index > currentStrategyIndex && strategyStates[strategy as Strategy],
+    );
+
     if (step) {
       setBoard((prevBoard) => executeStep(prevBoard, step));
-      if (step.type === 'crosshatch' && useHiddenSingles) {
-        setStep(hiddenSingles(board));
-      } else if (step.type === 'hiddenSingles' && useNakedPairs) {
-        setStep(nakedPairs(board));
-      } else if (step.type === 'nakedPairs' && useNakedTriples) {
-        setStep(nakedTriples(board));
-      } else if (step.type === 'nakedTriples' && useHiddenPairs) {
-        setStep(hiddenPairs(board));
-      } else if (step.type === 'hiddenPairs' && useHiddenTriples) {
-        setStep(hiddenTriples(board));
-      } else if (step.type === 'hiddenTriples' && useNakedQuads) {
-        setStep(nakedQuads(board));
-      } else if (step.type === 'nakedQuads' && useHiddenQuads) {
-        setStep(hiddenQuads(board));
-      } else if (step.type === 'hiddenQuads' && usePointingPairs) {
-        setStep(pointingPairs(board));
-      } else if (step.type === 'pointingPairs' && usePointingTriples) {
-        setStep(pointingTriples(board));
-      } else setStep(null);
-    } else if (useCrossHatch) setStep(crosshatch(board));
-    else if (useHiddenSingles) setStep(hiddenSingles(board));
-    else if (useNakedPairs) setStep(nakedPairs(board));
-    else if (useNakedTriples) setStep(nakedTriples(board));
-    else if (useHiddenPairs) setStep(hiddenPairs(board));
-    else if (useHiddenTriples) setStep(hiddenTriples(board));
-    else if (useNakedQuads) setStep(nakedQuads(board));
-    else if (useHiddenQuads) setStep(hiddenQuads(board));
-    else if (usePointingPairs) setStep(pointingPairs(board));
-    else if (usePointingTriples) setStep(pointingTriples(board));
+      if (nextStrategy) setStep(strategies[nextStrategy as Strategy](board));
+      else setStep(null);
+    } else {
+      const firstStrategy = strategyOrder.find(
+        (strategy) => strategyStates[strategy as Strategy],
+      );
+      if (firstStrategy) setStep(strategies[firstStrategy as Strategy](board));
+    }
   };
+
   return (
     <div className='bg-background flex flex-col gap-2 rounded-sm border'>
       <Button onClick={() => advanceStep()}>Take step</Button>
-      <StepControl
-        id='crosshatch'
-        checked={useCrossHatch}
-        name='Crosshatch'
-        onCheckedChange={setUseCrossHatch}
-      />
-      <StepControl
-        id='hiddenSingles'
-        checked={useHiddenSingles}
-        name='Hidden Singles'
-        onCheckedChange={setUseHiddenSingles}
-      />
-      <StepControl
-        id='nakedPairs'
-        checked={useNakedPairs}
-        name='Naked Pairs'
-        onCheckedChange={setUseNakedPairs}
-      />
-      <StepControl
-        id='nakedTriples'
-        checked={useNakedTriples}
-        name='Naked Triples'
-        onCheckedChange={setUseNakedTriples}
-      />
-      <StepControl
-        id='hiddenPairs'
-        checked={useHiddenPairs}
-        name='Hidden Pairs'
-        onCheckedChange={setUseHiddenPairs}
-      />
-      <StepControl
-        id='hiddenTriples'
-        checked={useHiddenTriples}
-        name='Hidden Triples'
-        onCheckedChange={setUseHiddenTriples}
-      />
-      <StepControl
-        id='nakedQuads'
-        checked={useNakedQuads}
-        name='Naked Quads'
-        onCheckedChange={setUseNakedQuads}
-      />
-      <StepControl
-        id='hiddenQuads'
-        checked={useHiddenQuads}
-        name='Hidden Quads'
-        onCheckedChange={setUseHiddenQuads}
-      />
-      <StepControl
-        id='pointingPairs'
-        checked={usePointingPairs}
-        name='Pointing Pairs'
-        onCheckedChange={setUsePointingPairs}
-      />
-      <StepControl
-        id='pointingTriples'
-        checked={usePointingTriples}
-        name='Pointing Triples'
-        onCheckedChange={setUsePointingTriples}
-      />
+      {Object.entries(strategyStates).map(([strategy, checked]) => (
+        <StepControl
+          key={strategy}
+          id={strategy}
+          checked={checked}
+          name={strategy}
+          onCheckedChange={handleStrategyChange(strategy)}
+        />
+      ))}
     </div>
   );
 };
