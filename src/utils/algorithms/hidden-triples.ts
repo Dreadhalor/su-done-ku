@@ -34,7 +34,7 @@ export const hiddenTriples = (board: Cell[][]) => {
           const { hint: hint2, cells: cells2 } = candidateTriples[j]!;
           const { hint: hint3, cells: cells3 } = candidateTriples[k]!;
           const uniqueCells = new Set([...cells1, ...cells2, ...cells3]);
-          if (uniqueCells.size !== 3) break;
+          if (uniqueCells.size !== 3) continue;
           const [a_0, a_1, a_2] = [...uniqueCells];
           // if no cells have more than 3 hint values, they're a naked triple & we have no inner value to eliminate
           if (
@@ -42,7 +42,7 @@ export const hiddenTriples = (board: Cell[][]) => {
             a_1!.hintValues.length <= 3 &&
             a_2!.hintValues.length <= 3
           )
-            break;
+            continue;
           const referenceValues = [Number(hint1), Number(hint2), Number(hint3)];
           // only cells that have hint values that aren't part of the triple are modified
           const modifiedCells = [a_0, a_1, a_2].filter(

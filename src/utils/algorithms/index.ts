@@ -6,6 +6,7 @@ import { hiddenPairs } from './hidden-pairs';
 import { hiddenTriples } from './hidden-triples';
 import { nakedQuads } from './naked-quads';
 import { hiddenQuads } from './hidden-quads';
+import { pointingPairs } from './pointing-pairs';
 
 export const strategies = {
   crosshatch,
@@ -16,6 +17,7 @@ export const strategies = {
   hiddenTriples,
   nakedQuads,
   hiddenQuads,
+  pointingPairs,
 } as const;
 
 export { formatCrosshatch, formatHiddenSingles };

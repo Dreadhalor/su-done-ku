@@ -41,7 +41,7 @@ export const hiddenQuads = (board: Cell[][]) => {
               ...cells3,
               ...cells4,
             ]);
-            if (uniqueCells.size !== 4) break;
+            if (uniqueCells.size !== 4) continue;
             const [a_0, a_1, a_2, a_3] = [...uniqueCells];
             // if no cells have more than 4 hint values, they're a naked quad & we have no inner value to eliminate
             if (
@@ -50,7 +50,7 @@ export const hiddenQuads = (board: Cell[][]) => {
               a_2!.hintValues.length <= 4 &&
               a_3!.hintValues.length <= 4
             )
-              break;
+              continue;
             const referenceValues = [
               Number(hint1),
               Number(hint2),

@@ -37,7 +37,7 @@ export const getRowMinusCell = (cell: Cell, board: Board) =>
   getRow(cell, board).filter(
     (c) => c.rowIndex !== cell.rowIndex || c.columnIndex !== cell.columnIndex,
   );
-const getRowFromIndex = (rowIndex: number, board: Board) =>
+export const getRowFromIndex = (rowIndex: number, board: Board) =>
   board[rowIndex] || [];
 const getColumn = (cell: Cell, board: Board) =>
   board.map((row) => row[cell.columnIndex] ?? ({} as Cell)) || [];
@@ -45,7 +45,7 @@ export const getColumnMinusCell = (cell: Cell, board: Board) =>
   getColumn(cell, board).filter(
     (c) => c.rowIndex !== cell.rowIndex || c.columnIndex !== cell.columnIndex,
   );
-const getColumnFromIndex = (columnIndex: number, board: Board) =>
+export const getColumnFromIndex = (columnIndex: number, board: Board) =>
   board.map((row) => row[columnIndex] ?? ({} as Cell)) || [];
 const getBox = (cell: Cell, board: Board) =>
   board
@@ -72,7 +72,14 @@ const getBoxFromIndex = (boxIndex: number, board: Board) => {
     .map((row) => row.slice(columnIndex, columnIndex + 3))
     .flat();
 };
-export const getRegions = (board: Cell[][]) => {
+export const getBoxes = (board: Board) => {
+  const boxes: Cell[][] = [];
+  for (let i = 0; i < 9; i++) {
+    boxes.push(getBoxFromIndex(i, board));
+  }
+  return boxes;
+};
+export const getRegions = (board: Board) => {
   const regions: Region[] = [];
   for (let i = 0; i < 9; i++) {
     regions.push({ cells: getRowFromIndex(i, board), type: 'row' });
@@ -111,3 +118,23 @@ export const parseBoard = (board: number[][]) =>
 // we're not actually using this anymore
 export const sortCells = (a: Cell, b: Cell | undefined) =>
   b ? 10 * (a.rowIndex - b.rowIndex) + (a.columnIndex - b.columnIndex) : -1;
+
+export const countHintValues = (cells: Cell[]) => {
+  const hintValueMap: Record<string, Cell[]> = {};
+  cells.forEach((cell) => {
+    const hintValues = cell.hintValues.map((hint) => `${hint}`);
+    hintValues.forEach((hint) => {
+      if (!hintValueMap[hint]) hintValueMap[hint] = [];
+      const cellsWithHint = hintValueMap[hint];
+      if (cellsWithHint) cellsWithHint.push(cell);
+    });
+  });
+  return hintValueMap;
+};
+
+export const filterHintCounts = (cells: Cell[], count: number) => {
+  const hintCounts = countHintValues(cells);
+  return Object.keys(hintCounts)
+    .filter((hint) => hintCounts[hint]!.length === count)
+    .map((hint) => ({ hint, cells: hintCounts[hint]! }));
+};
