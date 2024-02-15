@@ -51,6 +51,7 @@ const StepPanel = () => {
     nakedQuads,
     hiddenQuads,
     pointingPairs,
+    pointingTriples,
   } = strategies;
   const [useCrossHatch, setUseCrossHatch] = useState(true);
   const [useHiddenSingles, setUseHiddenSingles] = useState(false);
@@ -61,6 +62,7 @@ const StepPanel = () => {
   const [useNakedQuads, setUseNakedQuads] = useState(false);
   const [useHiddenQuads, setUseHiddenQuads] = useState(false);
   const [usePointingPairs, setUsePointingPairs] = useState(false);
+  const [usePointingTriples, setUsePointingTriples] = useState(false);
   const advanceStep = () => {
     if (step) {
       setBoard((prevBoard) => executeStep(prevBoard, step));
@@ -80,6 +82,8 @@ const StepPanel = () => {
         setStep(hiddenQuads(board));
       } else if (step.type === 'hiddenQuads' && usePointingPairs) {
         setStep(pointingPairs(board));
+      } else if (step.type === 'pointingPairs' && usePointingTriples) {
+        setStep(pointingTriples(board));
       } else setStep(null);
     } else if (useCrossHatch) setStep(crosshatch(board));
     else if (useHiddenSingles) setStep(hiddenSingles(board));
@@ -90,6 +94,7 @@ const StepPanel = () => {
     else if (useNakedQuads) setStep(nakedQuads(board));
     else if (useHiddenQuads) setStep(hiddenQuads(board));
     else if (usePointingPairs) setStep(pointingPairs(board));
+    else if (usePointingTriples) setStep(pointingTriples(board));
   };
   return (
     <div className='bg-background flex flex-col gap-2 rounded-sm border'>
@@ -147,6 +152,12 @@ const StepPanel = () => {
         checked={usePointingPairs}
         name='Pointing Pairs'
         onCheckedChange={setUsePointingPairs}
+      />
+      <StepControl
+        id='pointingTriples'
+        checked={usePointingTriples}
+        name='Pointing Triples'
+        onCheckedChange={setUsePointingTriples}
       />
     </div>
   );

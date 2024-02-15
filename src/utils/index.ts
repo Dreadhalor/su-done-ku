@@ -136,5 +136,8 @@ export const filterHintCounts = (cells: Cell[], count: number) => {
   const hintCounts = countHintValues(cells);
   return Object.keys(hintCounts)
     .filter((hint) => hintCounts[hint]!.length === count)
-    .map((hint) => ({ hint, cells: hintCounts[hint]! }));
+    .map((hint) => ({
+      hint: Number(hint) as CellValue,
+      cells: hintCounts[hint]!,
+    }));
 };
