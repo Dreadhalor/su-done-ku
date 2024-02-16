@@ -147,13 +147,134 @@ export const countHintValues = (cells: Cell[]) => {
   })) satisfies HintCounts;
   return result;
 };
-
 export const filterHintCounts = (cells: Cell[], counts: number[]) => {
   const hintCounts = countHintValues(cells);
   return hintCounts.filter((hintCount) =>
     counts.includes(hintCount.cells.length),
   );
 };
+export const getQuads = (cells: Cell[]) => {
+  const counts = filterHintCounts(cells, [2, 3, 4]);
+  const groups = [];
+  for (let i = 0; i < counts.length - 3; i++)
+    for (let j = i + 1; j < counts.length - 2; j++)
+      for (let k = j + 1; k < counts.length - 1; k++)
+        for (let l = k + 1; l < counts.length; l++) {
+          groups.push({
+            group: [
+              counts[i]!.hint,
+              counts[j]!.hint,
+              counts[k]!.hint,
+              counts[l]!.hint,
+            ],
+            cells: [
+              ...new Set([
+                ...(counts[i]!.cells ?? []),
+                ...(counts[j]!.cells ?? []),
+                ...(counts[k]!.cells ?? []),
+                ...(counts[l]!.cells ?? []),
+              ])!,
+            ],
+          });
+        }
+  // console.log('groups', groups);
+  return groups;
+};
+
+type Group = {
+  group: CellValue[];
+  cells: Cell[];
+};
+export const getGroups = (
+  cells: Cell[],
+  sizes: number[],
+  groupSize: number,
+) => {
+  const counts = filterHintCounts(cells, sizes);
+  const hintValues = counts.map(({ hint }) => hint);
+  const groups = sizes
+    .flatMap((size) => getCombinations(hintValues, size))
+    .map(
+      (group) =>
+        ({
+          group,
+          cells: [
+            ...new Set(
+              counts
+                .filter(({ hint }) => group.includes(hint))
+                .flatMap(({ cells }) => cells),
+            ),
+          ],
+        }) satisfies Group,
+    )
+    .filter(
+      (group) => group.group.length === groupSize && group.cells.length === 4,
+    );
+  console.log('groups!', groups);
+
+  return groups;
+};
+const getCombinations = (values: CellValue[], choose: number) => {
+  const combinations: CellValue[][] = [];
+  function findCombinations(
+    prefix: CellValue[],
+    remainingValues: CellValue[],
+    choose: number,
+  ) {
+    if (prefix.length === choose) {
+      combinations.push(prefix);
+      return;
+    }
+    for (let i = 0; i < remainingValues.length; i++) {
+      findCombinations(
+        [...prefix!, remainingValues[i]!],
+        remainingValues.slice(i + 1),
+        choose,
+      );
+    }
+  }
+  findCombinations([], values, choose);
+  return combinations;
+};
+export const getGroupsInRange = (
+  values: CellValue[],
+  minGroup: number,
+  maxGroup: number,
+) => {
+  const combinations: CellValue[][] = [];
+
+  function findCombinations(
+    prefix: CellValue[],
+    remainingValues: CellValue[],
+    minGroup: number,
+    maxGroup: number,
+  ) {
+    // Check if the current prefix's length falls within the specified range
+    if (prefix.length >= minGroup && prefix.length <= maxGroup) {
+      combinations.push(prefix);
+    }
+    // Stop recursion if the prefix length exceeds the maximum length
+    if (prefix.length >= maxGroup) return;
+
+    for (let i = 0; i < remainingValues.length; i++) {
+      if (prefix && remainingValues[i]) {
+        findCombinations(
+          [...prefix, ...remainingValues.slice(i, 1)],
+          remainingValues.slice(i + 1),
+          minGroup,
+          maxGroup,
+        );
+      }
+    }
+  }
+
+  findCombinations([], values, minGroup, maxGroup);
+  return combinations;
+};
+export const getRemovedValues = (cells: Cell[], referenceValues: CellValue[]) =>
+  [...new Set(cells.flatMap((cell) => cell.hintValues))].filter(
+    (hint) => !referenceValues.includes(hint),
+  );
 
 export const convertBoardToSnapshot = (board: Cell[][]) =>
   board.map((row) => row.map((cell) => cell.hintValues));
