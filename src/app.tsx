@@ -1,10 +1,13 @@
 import {
   Button,
+  Card,
+  CardContent,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Slider,
 } from 'dread-ui';
 import { useEffect, useState } from 'react';
 import { Cell, convertBoardToSnapshot, parseBoard } from './utils';
@@ -24,6 +27,7 @@ import { useBoard } from './providers/board-context';
 import { FaCheck } from 'react-icons/fa';
 import { CellGrid } from './components/cell-grid';
 import { StepDescriptionPanel } from './components/step-description-panel';
+import { PreviewToggle } from './components/preview-toggle';
 
 type PresetPuzzle =
   | 'nakedTriple'
@@ -38,7 +42,16 @@ type PresetPuzzle =
 
 // create a sudoku board with a 9x9 grid of cells, where each cell is a 3x3 grid of cells containing numbers 1-9
 function App() {
-  const { board, setBoard, setStep } = useBoard();
+  const {
+    board,
+    setBoard,
+    steps,
+    setStep,
+    sliderValue,
+    setSliderValue,
+    showPreview,
+    setShowPreview,
+  } = useBoard();
   const [sudokuToLoad, setSudokuToLoad] = useState<string>('');
 
   useEffect(() => {
@@ -109,7 +122,25 @@ function App() {
   return (
     <div className='flex h-full w-full items-center justify-center gap-4 border-4 border-white text-black'>
       <div className='flex flex-col gap-2'>
+        <PreviewToggle />
         <CellGrid />
+        <Card>
+          <CardContent noHeader className='p-3'>
+            <Slider
+              className='w-auto'
+              min={0}
+              max={steps.length}
+              value={[sliderValue]}
+              onValueChange={(e) => {
+                console.log(e);
+                const stepIndex = e[0]!;
+                const _step = steps[stepIndex]!;
+                setSliderValue(stepIndex);
+                setStep(_step);
+              }}
+            />
+          </CardContent>
+        </Card>
         <StepDescriptionPanel />
       </div>
       <div className='flex flex-col gap-4'>

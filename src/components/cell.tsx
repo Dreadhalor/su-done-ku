@@ -48,14 +48,6 @@ const CellComponent = ({ cell, eliminations }: CellProps) => {
       return acc;
     }, [] as CellValue[]);
 
-  // if (relevantEliminationReferences.length > 0)
-  //   console.log(
-  //     'relevantEliminationReferences',
-  //     relevantEliminationReferences,
-  //     'relevantNumberReferences',
-  //     relevantNumberReferences,
-  //   );
-
   return (
     <div
       className={cn(
