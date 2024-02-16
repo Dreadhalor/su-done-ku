@@ -1,4 +1,4 @@
-import { Cell, CellValue, Elimination, Step, getRegions } from '..';
+import { Cell, Elimination, Step, filterHintCounts, getRegions } from '..';
 
 export const hiddenSingles = (board: Cell[][]) => {
   const step: Step = {
@@ -7,28 +7,22 @@ export const hiddenSingles = (board: Cell[][]) => {
     eliminations: [],
   };
   const regions = getRegions(board);
+
   regions.forEach(({ cells }) => {
-    const hintValueMap: Record<string, Cell[]> = {};
-    cells.forEach((cell) => {
-      const hintValues = cell.hintValues.map((hint) => `${hint}`);
-      hintValues.forEach((hint) => {
-        if (!hintValueMap[hint]) hintValueMap[hint] = [];
-        const cellsWithHint = hintValueMap[hint];
-        if (cellsWithHint) cellsWithHint.push(cell);
-      });
-    });
-    Object.keys(hintValueMap).forEach((hint) => {
-      const cellsWithHint = hintValueMap[hint];
+    const counts = filterHintCounts(cells, [1]);
+    const hintValues = counts.map(({ hint }) => hint);
+    hintValues.forEach((hint) => {
+      const cellsWithHint = counts.find(({ hint: _hint }) => _hint === hint)
+        ?.cells;
       if (cellsWithHint && cellsWithHint.length === 1) {
         const cell = cellsWithHint[0];
         // ignore solved cells
         if (cell && cell.hintValues.length > 1) {
-          const value = Number(hint) as CellValue;
           const elimination: Elimination = {
             referenceCells: [cell],
-            referenceValues: [value],
+            referenceValues: [hint],
             modifiedCells: [cell],
-            removedValues: cell.hintValues.filter((hint) => hint !== value),
+            removedValues: cell.hintValues.filter((_hint) => _hint !== hint),
           };
           step.eliminations.push(elimination);
         }
