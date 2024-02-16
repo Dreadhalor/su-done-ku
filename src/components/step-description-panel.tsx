@@ -2,10 +2,24 @@ import { useBoard } from '../providers/board-context';
 // import { formatCrosshatch, formatHiddenSingles } from '../utils';
 
 const StepDescriptionPanel = () => {
-  const { step } = useBoard();
+  const { step, steps } = useBoard();
   return (
-    <div className='shrink-1 h-24 min-w-0 rounded-md bg-white'>
-      {step?.type}
+    <div className='shrink-1 h-24 min-w-0 overflow-auto rounded-md bg-white'>
+      {
+        <div className='flex flex-col gap-2 p-2'>
+          <h2 className='text-lg font-bold'>Steps</h2>
+          <div className='flex flex-col gap-2 overflow-y-auto'>
+            {steps.map((_step, index) => (
+              <div key={index} className='flex flex-col gap-2'>
+                <span className='text-sm font-bold'>{_step.type}</span>
+                {/* <span className='text-xs'>{formatCrosshatch(step)}</span>
+                <span className='text-xs'>{formatHiddenSingles(step)}</span> */}
+              </div>
+            ))}
+          </div>
+        </div>
+      }
+      {/* {step?.type} */}
       {/* <br></br>
       {step?.type === 'crosshatch' && formatCrosshatch(step)}
       {step?.type === 'hiddenSingles' && formatHiddenSingles(step)} */}

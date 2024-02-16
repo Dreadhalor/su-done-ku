@@ -38,7 +38,7 @@ type PresetPuzzle =
 
 // create a sudoku board with a 9x9 grid of cells, where each cell is a 3x3 grid of cells containing numbers 1-9
 function App() {
-  const { board, setBoard } = useBoard();
+  const { board, setBoard, setStep } = useBoard();
   const [sudokuToLoad, setSudokuToLoad] = useState<string>('');
 
   useEffect(() => {
@@ -72,6 +72,7 @@ function App() {
   // };
 
   const loadPuzzle = (puzzle: PresetPuzzle) => {
+    setStep(null);
     switch (puzzle) {
       case 'hiddenSingle':
         setBoard(parseBoard(hiddenSinglePuzzle));

@@ -99,16 +99,18 @@ export const getRegions = (board: Board) => {
   return regions;
 };
 
-export const executeStep = (board: Cell[][], step: Step) => {
+export const executeStep = (step: Step) => {
+  const snapshot = JSON.parse(JSON.stringify(step.boardSnapshot)) as Cell[][];
   step.eliminations.forEach((elimination) => {
     const { modifiedCells, removedValues } = elimination;
     modifiedCells.forEach((cell) => {
-      cell.hintValues = cell.hintValues.filter(
+      const _cell = snapshot[cell.rowIndex]![cell.columnIndex]!;
+      _cell.hintValues = _cell.hintValues.filter(
         (hint) => !removedValues.includes(hint),
       );
     });
   });
-  return [...board];
+  return snapshot;
 };
 
 export const parseBoard = (board: number[][]) =>
