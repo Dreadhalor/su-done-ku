@@ -80,14 +80,14 @@ function App() {
     addStep(initStep);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // const generatePuzzleWithApi = async () => {
-  //   const response = await fetch(
-  //     'https://sugoku.onrender.com/board?difficulty=medium',
-  //   );
-  //   const puzzle = await response.json();
-  //   const apiBoard = puzzle.board;
-  //   setBoard(parseBoard(apiBoard));
-  // };
+  const generatePuzzleWithApi = async () => {
+    // const response = await fetch(
+    //   'https://sugoku.onrender.com/board?difficulty=medium',
+    // );
+    // const puzzle = await response.json();
+    // const apiBoard = puzzle.board;
+    // setBoard(parseBoard(apiBoard));
+  };
 
   const loadPuzzle = (puzzle: PresetPuzzle) => {
     let _board: Cell[][] = [];
@@ -191,6 +191,7 @@ function App() {
         >
           Export board
         </Button>
+        <Button onClick={() => generatePuzzleWithApi()}>Generate puzzle</Button>
       </div>
     </div>
   );
