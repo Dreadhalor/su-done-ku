@@ -1,4 +1,12 @@
-import { Badge, BadgeVariants, Button, Checkbox, Label } from 'dread-ui';
+import {
+  Badge,
+  BadgeVariants,
+  Button,
+  Card,
+  CardContent,
+  Checkbox,
+  Label,
+} from 'dread-ui';
 import { useBoard } from '../providers/board-context';
 import { executeStep, strategies } from '../utils';
 import { useState } from 'react';
@@ -103,20 +111,26 @@ const StepPanel = () => {
   };
 
   return (
-    <div className='bg-background flex flex-col rounded-sm border'>
-      <Button onClick={() => advanceStep()} disabled={isSolved}>
-        {isSolved ? 'Solved!' : 'Take Step'}
-      </Button>
-      {Object.entries(strategyStates).map(([strategy, checked]) => (
-        <StepControl
-          key={strategy}
-          id={strategy}
-          checked={checked}
-          name={strategy}
-          onCheckedChange={handleStrategyChange(strategy)}
-        />
-      ))}
-    </div>
+    <Card className='w-[250px]'>
+      <CardContent noHeader className='flex flex-col justify-center p-1'>
+        <Button
+          className='mb-2 rounded-lg'
+          onClick={() => advanceStep()}
+          disabled={isSolved}
+        >
+          {isSolved ? 'Solved!' : 'Take Step'}
+        </Button>
+        {Object.entries(strategyStates).map(([strategy, checked]) => (
+          <StepControl
+            key={strategy}
+            id={strategy}
+            checked={checked}
+            name={strategy}
+            onCheckedChange={handleStrategyChange(strategy)}
+          />
+        ))}
+      </CardContent>
+    </Card>
   );
 };
 export { StepPanel };
