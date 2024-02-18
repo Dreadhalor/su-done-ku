@@ -1,5 +1,12 @@
-import { createContext, useContext, useLayoutEffect, useState } from 'react';
-import { Cell, Step } from '../utils';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from 'react';
+import { Cell, CellValue, Step, executeStep } from '../utils';
+import { editCell as _editCell } from '../utils/index';
 
 type BoardContextType = {
   board: Cell[][];
@@ -16,6 +23,8 @@ type BoardContextType = {
   setSliderValue: React.Dispatch<React.SetStateAction<number>>;
   resetSteps: () => void;
   addStep: (newStep: Step) => void;
+  editCell: (cell: Cell, hintValue: CellValue, enabled: boolean) => void;
+  isSolved: boolean;
 };
 
 export const BoardContext = createContext<BoardContextType>(
@@ -40,6 +49,17 @@ export const BoardProvider = ({ children }: BoardProviderProps) => {
   const [steps, setSteps] = useState<Step[]>([]);
   const [showPreview, setShowPreview] = useState<boolean>(true);
   const [sliderValue, setSliderValue] = useState<number>(0);
+  const [isSolved, setIsSolved] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (step) {
+      setIsSolved(
+        executeStep(step).every((row) =>
+          row.every((cell) => cell.hintValues.length === 1),
+        ) || false,
+      );
+    }
+  }, [step]);
 
   useLayoutEffect(() => {
     setSliderValue(steps.length);
@@ -50,10 +70,19 @@ export const BoardProvider = ({ children }: BoardProviderProps) => {
   };
   const addStep = (newStep: Step) => {
     setSteps((prev) => {
-      const newSteps = prev.slice(0, sliderValue + 1);
+      const newSteps = prev
+        .slice(0, sliderValue + 1)
+        // make sure to remove any filler steps that are being overwritten
+        .filter((s) => s.type !== 'none');
       return [...newSteps, newStep];
     });
     setStep(newStep);
+  };
+
+  const editCell = (cell: Cell, hintValue: CellValue, enabled: boolean) => {
+    const _step = _editCell(executeStep(step!), cell, hintValue, enabled);
+    if ((_step.additions?.length ?? 0) > 0 || _step.eliminations?.length > 0)
+      addStep(_step);
   };
 
   // useLayoutEffect(() => {
@@ -79,6 +108,8 @@ export const BoardProvider = ({ children }: BoardProviderProps) => {
         setSliderValue,
         resetSteps,
         addStep,
+        editCell,
+        isSolved,
       }}
     >
       {children}

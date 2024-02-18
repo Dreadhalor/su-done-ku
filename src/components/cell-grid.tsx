@@ -1,10 +1,18 @@
+import { cn } from '@repo/utils';
 import { useBoard } from '../providers/board-context';
 import { executeStep } from '../utils';
 import { Cell } from './cell';
 
 const GridTopAndBottom = () => {
+  const { isSolved } = useBoard();
+
   return (
-    <div className='flex h-5 flex-nowrap justify-center text-sm text-white'>
+    <div
+      className={cn(
+        'flex h-5 flex-nowrap justify-center text-sm text-white',
+        isSolved && 'bg-green-500',
+      )}
+    >
       {Array.from({ length: 9 }).map((_, index) => (
         <div
           key={index}
@@ -17,9 +25,16 @@ const GridTopAndBottom = () => {
   );
 };
 const GridLeftAndRight = ({ index }: { index: number }) => {
+  const { isSolved } = useBoard();
+
   // count up from A
   return (
-    <div className='flex w-5 items-center justify-center border text-sm text-white'>
+    <div
+      className={cn(
+        'flex w-5 items-center justify-center border text-sm text-white',
+        isSolved && 'bg-green-500',
+      )}
+    >
       {String.fromCharCode(65 + index)}
     </div>
   );
@@ -27,7 +42,7 @@ const GridLeftAndRight = ({ index }: { index: number }) => {
 
 const CellGrid = () => {
   const { step, showPreview } = useBoard();
-  const { eliminations } = step || { eliminations: [] };
+  const { eliminations, additions } = step || { eliminations: [] };
 
   const boardToShow =
     (showPreview ? step?.boardSnapshot : executeStep(step!)) || [];
@@ -39,7 +54,12 @@ const CellGrid = () => {
         <div key={rowIndex} className='flex flex-nowrap'>
           <GridLeftAndRight index={rowIndex} />
           {row.map((cell, cellIndex) => (
-            <Cell key={cellIndex} cell={cell} eliminations={eliminations} />
+            <Cell
+              key={cellIndex}
+              cell={cell}
+              eliminations={eliminations}
+              additions={additions}
+            />
           ))}
           <GridLeftAndRight index={rowIndex} />
         </div>

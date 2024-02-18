@@ -27,10 +27,15 @@ export type Elimination = {
   referenceValues: CellValue[];
   removedValues: CellValue[];
 };
+export type Addition = {
+  cell: Cell;
+  hintValue: CellValue;
+};
 export type Step = {
   type: string;
   boardSnapshot: Cell[][];
   eliminations: Elimination[];
+  additions?: Addition[];
   skippedStrategies?: Strategy[];
   failedStrategies?: Strategy[];
 };
@@ -112,6 +117,11 @@ export const executeStep = (step: Step) => {
         (hint) => !removedValues.includes(hint),
       );
     });
+  });
+  step.additions?.forEach(({ cell, hintValue }) => {
+    console.log({ cell, hintValue });
+    const _cell = snapshot[cell.rowIndex]![cell.columnIndex]!;
+    _cell.hintValues = [...new Set([...cell.hintValues, hintValue])];
   });
   return snapshot;
 };
@@ -220,3 +230,29 @@ export const getRemovedValues = (cells: Cell[], referenceValues: CellValue[]) =>
 
 export const convertBoardToSnapshot = (board: Cell[][]) =>
   board.map((row) => row.map((cell) => cell.hintValues));
+
+export const editCell = (
+  board: Cell[][],
+  cell: Cell,
+  hintValue: CellValue,
+  enabled: boolean,
+) => {
+  const step: Step = {
+    type: 'manual',
+    boardSnapshot: JSON.parse(JSON.stringify(board)),
+    eliminations: [],
+    additions: [],
+  };
+  if (enabled) {
+    // if (enabled && !cell.hintValues.includes(hintValue)) {
+    step.additions?.push({ cell, hintValue });
+  } else if (!enabled && cell.hintValues.includes(hintValue)) {
+    step.eliminations.push({
+      referenceCells: [],
+      modifiedCells: [cell],
+      referenceValues: [],
+      removedValues: [hintValue],
+    });
+  }
+  return step;
+};

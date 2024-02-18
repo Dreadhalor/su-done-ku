@@ -1,17 +1,18 @@
 import { cn } from '@repo/utils';
-import { Cell, CellValue, Elimination } from '../utils';
+import { Addition, Cell, CellValue, Elimination } from '../utils';
 import { Button } from 'dread-ui';
 import { useBoard } from '../providers/board-context';
 
 type CellProps = {
   cell: Cell;
   eliminations: Elimination[];
+  additions?: Addition[];
 };
-const CellComponent = ({ cell, eliminations }: CellProps) => {
+const CellComponent = ({ cell, eliminations, additions = [] }: CellProps) => {
   const { rowIndex, columnIndex, hintValues } = cell;
-  const { board, setBoard, step, showPreview } = useBoard();
+  const { editCell, showPreview, isSolved } = useBoard();
   const value = cell.hintValues.length === 1 ? cell.hintValues[0] : null;
-  // if (rowIndex === 0 && columnIndex === 0) console.log(eliminations);
+  const isErrored = cell.hintValues.length === 0;
 
   const relevantEliminations = eliminations
     .filter((elimination) =>
@@ -30,7 +31,6 @@ const CellComponent = ({ cell, eliminations }: CellProps) => {
       });
       return acc;
     }, [] as CellValue[]);
-  // if (relevantEliminations.length > 0) console.log({ relevantEliminations });
 
   const relevantEliminationReferences = eliminations.filter((elimination) =>
     elimination.referenceCells.some(
@@ -48,6 +48,15 @@ const CellComponent = ({ cell, eliminations }: CellProps) => {
       return acc;
     }, [] as CellValue[]);
 
+  const relevantAdditions = additions.filter(
+    (addition) =>
+      addition.cell.rowIndex === rowIndex &&
+      addition.cell.columnIndex === columnIndex,
+  );
+  const relevantAddedValues = relevantAdditions.map(
+    (addition) => addition.hintValue,
+  );
+
   return (
     <div
       className={cn(
@@ -60,33 +69,39 @@ const CellComponent = ({ cell, eliminations }: CellProps) => {
         relevantEliminationReferences.length > 0 &&
           showPreview &&
           'bg-green-200',
-        step && 'pointer-events-none',
+        isErrored && 'bg-red-500',
+        isSolved && 'pointer-events-none',
       )}
     >
       {value && value}
       {!value &&
-        Array.from({ length: 9 }).map((_, index) => (
-          <Button
-            key={index}
-            variant='ghost'
-            className={cn(
-              'h-4 w-4 rounded-none p-0 text-xs',
-              relevantEliminations.includes(index + 1) && 'bg-red-500',
-              relevantNumberReferences.includes(index + 1) &&
-                hintValues.includes(index + 1) &&
-                showPreview &&
-                'bg-green-500',
-            )}
-            onClick={() => {
-              cell.hintValues = hintValues.includes((index + 1) as CellValue)
-                ? hintValues.filter((hint) => hint !== index + 1)
-                : [...hintValues, (index + 1) as CellValue];
-              setBoard([...board]);
-            }}
-          >
-            {hintValues.includes((index + 1) as CellValue) ? index + 1 : ''}
-          </Button>
-        ))}
+        Array.from({ length: 9 }).map((_, _index) => {
+          const hintValue = (_index + 1) as CellValue;
+          const isPresent = hintValues.includes(hintValue);
+          const isEliminated = relevantEliminations.includes(hintValue);
+          const isAdded = relevantAddedValues.includes(hintValue);
+          const isReferenced = relevantNumberReferences.includes(hintValue);
+          return (
+            <Button
+              key={hintValue}
+              variant='ghost'
+              className={cn(
+                'h-4 w-4 rounded-none p-0 text-xs',
+                isEliminated && 'bg-red-500 text-white',
+                isReferenced &&
+                  isPresent &&
+                  showPreview &&
+                  'bg-green-500 text-white',
+                isAdded && showPreview && 'bg-blue-400 text-white',
+              )}
+              onClick={() => {
+                editCell(cell, hintValue, isEliminated || !isPresent);
+              }}
+            >
+              {isPresent || isAdded ? hintValue : ''}
+            </Button>
+          );
+        })}
     </div>
   );
 };

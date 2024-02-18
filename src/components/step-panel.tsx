@@ -56,7 +56,7 @@ const StepControl = ({
 };
 
 const StepPanel = () => {
-  const { step, addStep } = useBoard();
+  const { step, addStep, isSolved } = useBoard();
   const [strategyStates, setStrategyStates] = useState({
     crosshatch: true,
     hiddenSingles: true,
@@ -93,12 +93,20 @@ const StepPanel = () => {
       } else skippedStrategies.push(strategy as Strategy);
     }
     // if no eliminations are made, execute a step with no eliminations
-    addStep({ type: 'manual', boardSnapshot: board, eliminations: [] });
+    addStep({
+      type: 'none',
+      boardSnapshot: board,
+      eliminations: [],
+      failedStrategies,
+      skippedStrategies,
+    });
   };
 
   return (
     <div className='bg-background flex flex-col rounded-sm border'>
-      <Button onClick={() => advanceStep()}>Take step</Button>
+      <Button onClick={() => advanceStep()} disabled={isSolved}>
+        {isSolved ? 'Solved!' : 'Take Step'}
+      </Button>
       {Object.entries(strategyStates).map(([strategy, checked]) => (
         <StepControl
           key={strategy}
