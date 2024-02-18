@@ -10,7 +10,13 @@ import {
   Slider,
 } from 'dread-ui';
 import { useEffect, useState } from 'react';
-import { Cell, Step, convertBoardToSnapshot, parseBoard } from './utils';
+import {
+  Cell,
+  Step,
+  convertBoardToSnapshot,
+  parseBoard,
+  parseBoardString,
+} from './utils';
 import {
   hiddenSinglePuzzle,
   nakedPairPuzzle,
@@ -81,12 +87,20 @@ function App() {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const generatePuzzleWithApi = async () => {
-    // const response = await fetch(
-    //   'https://sugoku.onrender.com/board?difficulty=medium',
-    // );
-    // const puzzle = await response.json();
-    // const apiBoard = puzzle.board;
-    // setBoard(parseBoard(apiBoard));
+    const response = await fetch('http://localhost:3000/api/puzzle/random');
+    const res = await response.json();
+    const { puzzle } = res;
+    console.log(puzzle);
+    const initStep: Step = {
+      type: 'start',
+      boardSnapshot: JSON.parse(
+        JSON.stringify(parseBoardString(puzzle.puzzle)),
+      ),
+      eliminations: [],
+    };
+    console.log(initStep);
+    resetSteps();
+    addStep(initStep);
   };
 
   const loadPuzzle = (puzzle: PresetPuzzle) => {

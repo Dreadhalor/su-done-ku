@@ -1,8 +1,7 @@
 import { useBoard } from '../providers/board-context';
-// import { formatCrosshatch, formatHiddenSingles } from '../utils';
 
 const StepDescriptionPanel = () => {
-  const { step, steps } = useBoard();
+  const { steps } = useBoard();
   return (
     <div className='shrink-1 h-24 min-w-0 overflow-auto rounded-md bg-white'>
       {
@@ -19,10 +18,6 @@ const StepDescriptionPanel = () => {
           </div>
         </div>
       }
-      {/* {step?.type} */}
-      {/* <br></br>
-      {step?.type === 'crosshatch' && formatCrosshatch(step)}
-      {step?.type === 'hiddenSingles' && formatHiddenSingles(step)} */}
     </div>
   );
 };

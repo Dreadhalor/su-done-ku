@@ -1,4 +1,4 @@
-import { flatMap, groupBy, map } from 'lodash';
+import { chunk, flatMap, groupBy, map } from 'lodash';
 import { Strategy } from '.';
 
 export * from './algorithms';
@@ -138,6 +138,23 @@ export const parseBoard = (board: number[][]) =>
           isLocked: value !== 0,
         }) as Cell,
     ),
+  );
+
+// an 81-character string that represents a sudoku board, where 0 represents an empty cell
+export const parseBoardString = (board: string) =>
+  chunk(
+    board.split('').map((char, i) => {
+      const value = Number(char);
+      return {
+        hintValues: value === 0 ? [1, 2, 3, 4, 5, 6, 7, 8, 9] : [value],
+        rowIndex: Math.floor(i / 9),
+        columnIndex: i % 9,
+        boxIndex:
+          Math.floor(Math.floor(i / 9) / 3) * 3 + Math.floor((i % 9) / 3),
+        isLocked: value !== 0,
+      } as Cell;
+    }),
+    9,
   );
 
 // we're not actually using this anymore

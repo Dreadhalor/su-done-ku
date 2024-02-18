@@ -1,5 +1,5 @@
-import { crosshatch, formatCrosshatch } from './crosshatch';
-import { hiddenSingles, formatHiddenSingles } from './hidden-singles';
+import { crosshatch } from './crosshatch';
+import { hiddenSingles } from './hidden-singles';
 import { nakedPairs } from './naked-pairs';
 import { nakedTriples } from './naked-triples';
 import { hiddenPairs } from './hidden-pairs';
@@ -23,7 +23,5 @@ export const strategies = {
   pointingTriples,
   boxLineReduction,
 } as const;
-
-export { formatCrosshatch, formatHiddenSingles };
 
 export type Strategy = keyof typeof strategies;
