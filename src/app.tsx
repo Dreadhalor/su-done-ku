@@ -43,14 +43,11 @@ type PresetPuzzle =
 // create a sudoku board with a 9x9 grid of cells, where each cell is a 3x3 grid of cells containing numbers 1-9
 function App() {
   const {
-    board,
-    setBoard,
+    step,
     steps,
     setStep,
     sliderValue,
     setSliderValue,
-    showPreview,
-    setShowPreview,
     resetSteps,
     addStep,
   } = useBoard();
@@ -79,7 +76,6 @@ function App() {
       boardSnapshot: JSON.parse(JSON.stringify(newBoard)),
       eliminations: [],
     };
-    setBoard(newBoard);
     resetSteps();
     addStep(initStep);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -133,7 +129,6 @@ function App() {
     };
     resetSteps();
     addStep(initStep);
-    setBoard(_board);
   };
 
   return (
@@ -189,7 +184,11 @@ function App() {
           </Button>
         </div>
         <StepPanel />
-        <Button onClick={() => console.log(convertBoardToSnapshot(board))}>
+        <Button
+          onClick={() =>
+            console.log(convertBoardToSnapshot(step?.boardSnapshot || []))
+          }
+        >
           Export board
         </Button>
       </div>

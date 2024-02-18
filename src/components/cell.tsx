@@ -74,6 +74,7 @@ const CellComponent = ({ cell, eliminations }: CellProps) => {
               relevantEliminations.includes(index + 1) && 'bg-red-500',
               relevantNumberReferences.includes(index + 1) &&
                 hintValues.includes(index + 1) &&
+                showPreview &&
                 'bg-green-500',
             )}
             onClick={() => {

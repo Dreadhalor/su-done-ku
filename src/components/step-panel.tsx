@@ -1,4 +1,4 @@
-import { Button, Checkbox, Label } from 'dread-ui';
+import { Badge, BadgeVariants, Button, Checkbox, Label } from 'dread-ui';
 import { useBoard } from '../providers/board-context';
 import { executeStep, strategies } from '../utils';
 import { useState } from 'react';
@@ -18,11 +18,18 @@ const StepControl = ({
   onCheckedChange,
 }: StepControlProps) => {
   const { step } = useBoard();
+  const failed = step?.failedStrategies?.includes(id as Strategy);
+  const skipped = step?.skippedStrategies?.includes(id as Strategy);
+  const variant: BadgeVariants = failed
+    ? 'destructive'
+    : skipped
+      ? 'caution'
+      : 'default';
 
   return (
     <div
       className={cn(
-        'flex flex-nowrap gap-2',
+        'flex h-8 flex-nowrap items-center gap-2 px-2',
         step?.type === id && 'bg-yellow-200',
       )}
     >
@@ -36,6 +43,14 @@ const StepControl = ({
         }}
       />
       <Label htmlFor={id}>{name}</Label>
+      <div className='ml-auto'>
+        {(skipped || failed) && (
+          <Badge variant={variant}>
+            {failed && 'failed'}
+            {skipped && 'skipped'}
+          </Badge>
+        )}
+      </div>
     </div>
   );
 };
@@ -44,41 +59,45 @@ const StepPanel = () => {
   const { step, addStep } = useBoard();
   const [strategyStates, setStrategyStates] = useState({
     crosshatch: true,
-    hiddenSingles: false,
-    nakedPairs: false,
-    nakedTriples: false,
-    hiddenPairs: false,
-    hiddenTriples: false,
-    nakedQuads: false,
-    hiddenQuads: false,
-    pointingPairs: false,
-    pointingTriples: false,
-    boxLineReduction: false,
+    hiddenSingles: true,
+    nakedPairs: true,
+    nakedTriples: true,
+    hiddenPairs: true,
+    hiddenTriples: true,
+    nakedQuads: true,
+    hiddenQuads: true,
+    pointingPairs: true,
+    pointingTriples: true,
+    boxLineReduction: true,
   });
   const handleStrategyChange = (strategy: string) => (checked: boolean) => {
     setStrategyStates((prev) => ({ ...prev, [strategy]: checked }));
   };
 
   const advanceStep = () => {
-    const strategyOrder = Object.keys(strategyStates);
-    const currentStrategyIndex = strategyOrder.indexOf(step?.type || '');
-    const nextStrategy = strategyOrder.find(
-      (strategy, index) =>
-        index > currentStrategyIndex && strategyStates[strategy as Strategy],
-    );
-
-    if (step) {
-      const newBoard = executeStep(step);
-      if (nextStrategy) {
-        addStep(strategies[nextStrategy as Strategy](newBoard));
-      } else {
-        addStep({ type: 'manual', boardSnapshot: newBoard, eliminations: [] });
-      }
+    // iterate through strategies & execute all checked strategies until one makes an elimination
+    const board = executeStep(step!);
+    const failedStrategies: Strategy[] = [];
+    const skippedStrategies: Strategy[] = [];
+    for (const [strategy, checked] of Object.entries(strategyStates)) {
+      if (checked) {
+        const newStep = strategies[strategy as Strategy](board);
+        if (newStep.eliminations.length > 0) {
+          addStep({
+            ...newStep,
+            failedStrategies,
+            skippedStrategies,
+          });
+          return;
+        } else failedStrategies.push(strategy as Strategy);
+      } else skippedStrategies.push(strategy as Strategy);
     }
+    // if no eliminations are made, execute a step with no eliminations
+    addStep({ type: 'manual', boardSnapshot: board, eliminations: [] });
   };
 
   return (
-    <div className='bg-background flex flex-col gap-2 rounded-sm border'>
+    <div className='bg-background flex flex-col rounded-sm border'>
       <Button onClick={() => advanceStep()}>Take step</Button>
       {Object.entries(strategyStates).map(([strategy, checked]) => (
         <StepControl

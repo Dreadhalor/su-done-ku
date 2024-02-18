@@ -46,11 +46,13 @@ export const BoardProvider = ({ children }: BoardProviderProps) => {
   }, [steps]);
 
   const resetSteps = () => {
-    setSteps([]);
-    setStep(null);
+    setSteps(() => []);
   };
   const addStep = (newStep: Step) => {
-    setSteps((prevSteps) => [...prevSteps, newStep]);
+    setSteps((prev) => {
+      const newSteps = prev.slice(0, sliderValue + 1);
+      return [...newSteps, newStep];
+    });
     setStep(newStep);
   };
 

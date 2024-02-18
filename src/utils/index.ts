@@ -1,4 +1,5 @@
 import { flatMap, groupBy, map } from 'lodash';
+import { Strategy } from '.';
 
 export * from './algorithms';
 
@@ -30,6 +31,8 @@ export type Step = {
   type: string;
   boardSnapshot: Cell[][];
   eliminations: Elimination[];
+  skippedStrategies?: Strategy[];
+  failedStrategies?: Strategy[];
 };
 
 type Board = Cell[][];
