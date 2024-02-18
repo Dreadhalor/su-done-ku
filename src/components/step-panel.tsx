@@ -41,7 +41,7 @@ const StepControl = ({
 };
 
 const StepPanel = () => {
-  const { board, setBoard, step, setStep, setSteps } = useBoard();
+  const { step, addStep } = useBoard();
   const [strategyStates, setStrategyStates] = useState({
     crosshatch: true,
     hiddenSingles: false,
@@ -68,25 +68,11 @@ const StepPanel = () => {
     );
 
     if (step) {
-      let _board = board;
-      setBoard((prevBoard) => {
-        _board = executeStep(step);
-        if (JSON.stringify(prevBoard) !== JSON.stringify(_board)) {
-          setSteps((prevSteps) => [...prevSteps, step]);
-        }
-        return _board;
-      });
+      const newBoard = executeStep(step);
       if (nextStrategy) {
-        setStep(strategies[nextStrategy as Strategy](_board));
+        addStep(strategies[nextStrategy as Strategy](newBoard));
       } else {
-        setStep(null);
-      }
-    } else {
-      const firstStrategy = strategyOrder.find(
-        (strategy) => strategyStates[strategy as Strategy],
-      );
-      if (firstStrategy) {
-        setStep(strategies[firstStrategy as Strategy](board));
+        addStep({ type: 'manual', boardSnapshot: newBoard, eliminations: [] });
       }
     }
   };

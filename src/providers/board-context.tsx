@@ -14,6 +14,8 @@ type BoardContextType = {
   setShowPreview: React.Dispatch<React.SetStateAction<boolean>>;
   sliderValue: number;
   setSliderValue: React.Dispatch<React.SetStateAction<number>>;
+  resetSteps: () => void;
+  addStep: (newStep: Step) => void;
 };
 
 export const BoardContext = createContext<BoardContextType>(
@@ -43,6 +45,15 @@ export const BoardProvider = ({ children }: BoardProviderProps) => {
     setSliderValue(steps.length);
   }, [steps]);
 
+  const resetSteps = () => {
+    setSteps([]);
+    setStep(null);
+  };
+  const addStep = (newStep: Step) => {
+    setSteps((prevSteps) => [...prevSteps, newStep]);
+    setStep(newStep);
+  };
+
   // useLayoutEffect(() => {
   //   if (showPreview) {
   //     setBoard(step?.boardSnapshot || [[]]);
@@ -64,6 +75,8 @@ export const BoardProvider = ({ children }: BoardProviderProps) => {
         setShowPreview,
         sliderValue,
         setSliderValue,
+        resetSteps,
+        addStep,
       }}
     >
       {children}

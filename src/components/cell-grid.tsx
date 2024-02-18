@@ -1,4 +1,5 @@
 import { useBoard } from '../providers/board-context';
+import { executeStep } from '../utils';
 import { Cell } from './cell';
 
 const GridTopAndBottom = () => {
@@ -25,13 +26,16 @@ const GridLeftAndRight = ({ index }: { index: number }) => {
 };
 
 const CellGrid = () => {
-  const { board, step } = useBoard();
+  const { step, showPreview } = useBoard();
   const { eliminations } = step || { eliminations: [] };
+
+  const boardToShow =
+    (showPreview ? step?.boardSnapshot : executeStep(step!)) || [];
 
   return (
     <div className='flex flex-col'>
       <GridTopAndBottom />
-      {board.map((row, rowIndex) => (
+      {boardToShow.map((row, rowIndex) => (
         <div key={rowIndex} className='flex flex-nowrap'>
           <GridLeftAndRight index={rowIndex} />
           {row.map((cell, cellIndex) => (

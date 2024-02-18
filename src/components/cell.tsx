@@ -9,7 +9,7 @@ type CellProps = {
 };
 const CellComponent = ({ cell, eliminations }: CellProps) => {
   const { rowIndex, columnIndex, hintValues } = cell;
-  const { board, setBoard, step } = useBoard();
+  const { board, setBoard, step, showPreview } = useBoard();
   const value = cell.hintValues.length === 1 ? cell.hintValues[0] : null;
   // if (rowIndex === 0 && columnIndex === 0) console.log(eliminations);
 
@@ -57,7 +57,9 @@ const CellComponent = ({ cell, eliminations }: CellProps) => {
         rowIndex % 3 === 2 && rowIndex < 8 && 'border-b-4',
         columnIndex % 3 === 2 && columnIndex < 8 && 'border-r-4',
         relevantEliminations.length > 0 && 'bg-red-200',
-        relevantEliminationReferences.length > 0 && 'bg-green-200',
+        relevantEliminationReferences.length > 0 &&
+          showPreview &&
+          'bg-green-200',
         step && 'pointer-events-none',
       )}
     >

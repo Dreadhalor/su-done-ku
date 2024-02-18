@@ -10,7 +10,7 @@ import {
   Slider,
 } from 'dread-ui';
 import { useEffect, useState } from 'react';
-import { Cell, convertBoardToSnapshot, parseBoard } from './utils';
+import { Cell, Step, convertBoardToSnapshot, parseBoard } from './utils';
 import {
   hiddenSinglePuzzle,
   nakedPairPuzzle,
@@ -51,6 +51,8 @@ function App() {
     setSliderValue,
     showPreview,
     setShowPreview,
+    resetSteps,
+    addStep,
   } = useBoard();
   const [sudokuToLoad, setSudokuToLoad] = useState<string>('');
 
@@ -72,7 +74,14 @@ function App() {
     newBoard[4]![5]!.hintValues = [1];
     newBoard[2]![2]!.hintValues = [4];
 
+    const initStep: Step = {
+      type: 'start',
+      boardSnapshot: JSON.parse(JSON.stringify(newBoard)),
+      eliminations: [],
+    };
     setBoard(newBoard);
+    resetSteps();
+    addStep(initStep);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // const generatePuzzleWithApi = async () => {
@@ -85,38 +94,46 @@ function App() {
   // };
 
   const loadPuzzle = (puzzle: PresetPuzzle) => {
-    setStep(null);
+    let _board: Cell[][] = [];
     switch (puzzle) {
       case 'hiddenSingle':
-        setBoard(parseBoard(hiddenSinglePuzzle));
+        _board = parseBoard(hiddenSinglePuzzle);
         break;
       case 'nakedPair':
-        setBoard(parseBoard(nakedPairPuzzle));
+        _board = parseBoard(nakedPairPuzzle);
         break;
       case 'nakedTriple':
-        setBoard(parseBoard(nakedTriplePuzzle));
+        _board = parseBoard(nakedTriplePuzzle);
         break;
       case 'hiddenPair':
-        setBoard(parseBoard(hiddenPairPuzzle));
+        _board = parseBoard(hiddenPairPuzzle);
         break;
       case 'hiddenTriple':
-        setBoard(parseBoard(hiddenTriplePuzzle));
+        _board = parseBoard(hiddenTriplePuzzle);
         break;
       case 'hiddenQuad':
-        setBoard(parseBoard(hiddenQuadPuzzle));
+        _board = parseBoard(hiddenQuadPuzzle);
         break;
       case 'pointingPair':
-        setBoard(parseBoard(pointingPairPuzzle));
+        _board = parseBoard(pointingPairPuzzle);
         break;
       case 'pointingTriple':
-        setBoard(parseBoard(pointingTriplePuzzle));
+        _board = parseBoard(pointingTriplePuzzle);
         break;
       case 'boxLineReduction':
-        setBoard(parseBoard(boxLineReductionPuzzle));
+        _board = parseBoard(boxLineReductionPuzzle);
         break;
       default:
         break;
     }
+    const initStep: Step = {
+      type: 'start',
+      boardSnapshot: JSON.parse(JSON.stringify(_board)),
+      eliminations: [],
+    };
+    resetSteps();
+    addStep(initStep);
+    setBoard(_board);
   };
 
   return (
@@ -127,9 +144,10 @@ function App() {
         <Card>
           <CardContent noHeader className='p-3'>
             <Slider
+              disabled={steps.length <= 1}
               className='w-auto'
               min={0}
-              max={steps.length}
+              max={steps.length - 1}
               value={[sliderValue]}
               onValueChange={(e) => {
                 console.log(e);
