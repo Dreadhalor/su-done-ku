@@ -14,7 +14,7 @@ const GeneratePuzzleButton = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button className='w-full rounded-lg'>
-          Generate Puzzle
+          <span className='ml-auto'>Generate Puzzle</span>
           <ChevronDown className='ml-auto' />
         </Button>
       </DropdownMenuTrigger>

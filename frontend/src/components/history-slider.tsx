@@ -2,10 +2,10 @@ import { Slider } from 'dread-ui';
 import { useBoard } from '../providers/board-context';
 
 const HistorySlider = () => {
-  const { setStep, steps, sliderValue, setSliderValue } = useBoard();
+  const { setStep, steps, sliderValue, setSliderValue, isEditing } = useBoard();
   return (
     <Slider
-      disabled={steps.length <= 1}
+      disabled={steps.length <= 1 || isEditing}
       className='w-auto'
       min={0}
       max={steps.length - 1}

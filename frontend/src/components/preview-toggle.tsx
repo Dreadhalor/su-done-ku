@@ -2,7 +2,7 @@ import { Tabs, TabsList, TabsTrigger } from 'dread-ui';
 import { useBoard } from '../providers/board-context';
 
 const PreviewToggle = () => {
-  const { showPreview, setShowPreview } = useBoard();
+  const { showPreview, setShowPreview, isEditing } = useBoard();
   return (
     <Tabs
       variant='pills'
@@ -10,8 +10,12 @@ const PreviewToggle = () => {
       onValueChange={(val) => setShowPreview(val === 'changes')}
     >
       <TabsList className='grid w-full grid-cols-2'>
-        <TabsTrigger value='board'>Board</TabsTrigger>
-        <TabsTrigger value='changes'>Changes</TabsTrigger>
+        <TabsTrigger disabled={isEditing} value='board'>
+          Board
+        </TabsTrigger>
+        <TabsTrigger disabled={isEditing} value='changes'>
+          Changes
+        </TabsTrigger>
       </TabsList>
     </Tabs>
   );

@@ -1,17 +1,20 @@
+import { createContext, useContext, useLayoutEffect, useState } from 'react';
 import {
-  createContext,
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useState,
-} from 'react';
-import { Cell, CellValue, Step, executeStep, parseAPIBoard } from '../utils';
+  Cell,
+  CellValue,
+  Step,
+  createEmptyBoard,
+  createEmptyEditingPuzzle,
+  executeStep,
+  parseAPIBoard,
+  parseEditingPuzzle,
+} from '../utils';
 import { editCell as _editCell } from '../utils/index';
 import { ApiResponseBody } from '@repo/su-done-ku-backend/src/routes/random';
 
 type BoardContextType = {
   step: Step | null;
-  setStep: React.Dispatch<React.SetStateAction<Step | null>>;
+  setStep: React.Dispatch<React.SetStateAction<Step>>;
   steps: Step[];
   setSteps: React.Dispatch<React.SetStateAction<Step[]>>;
   showPreview: boolean;
@@ -24,6 +27,11 @@ type BoardContextType = {
   isSolved: boolean;
   isErrored: boolean;
   generatePuzzleWithApi: (difficulty?: string) => void;
+  isEditing: boolean;
+  setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
+  editingPuzzle: string[][];
+  setEditingPuzzle: React.Dispatch<React.SetStateAction<string[][]>>;
+  loadEditingPuzzle: () => void;
 };
 
 export const BoardContext = createContext<BoardContextType>(
@@ -42,33 +50,74 @@ type BoardProviderProps = {
   children: React.ReactNode;
 };
 export const BoardProvider = ({ children }: BoardProviderProps) => {
-  const [step, setStep] = useState<Step | null>(null);
-  const [steps, setSteps] = useState<Step[]>([]);
+  const [step, setStep] = useState<Step>({
+    type: 'start',
+    boardSnapshot: createEmptyBoard(),
+    eliminations: [],
+  });
+  const [steps, setSteps] = useState<Step[]>([step]);
   const [showPreview, setShowPreview] = useState<boolean>(true);
   const [sliderValue, setSliderValue] = useState<number>(0);
   const [isSolved, setIsSolved] = useState<boolean>(false);
   const [isErrored, setIsErrored] = useState<boolean>(false);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [editingPuzzle, setEditingPuzzle] = useState<string[][]>(
+    createEmptyEditingPuzzle(),
+  );
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (step) {
       setIsSolved(
-        executeStep(step).every((row) =>
-          row.every((cell) => cell.hintValues.length === 1),
-        ) || false,
+        (!isEditing &&
+          executeStep(step).every((row) =>
+            row.every((cell) => cell.hintValues.length === 1),
+          )) ||
+          false,
       );
       setIsErrored(
-        executeStep(step).some((row) =>
-          row.some((cell) => cell.hintValues.length === 0),
-        ) || false,
+        (!isEditing &&
+          executeStep(step).some((row) =>
+            row.some((cell) => cell.hintValues.length === 0),
+          )) ||
+          false,
       );
+    } else {
+      setIsSolved(false);
+      setIsErrored(false);
     }
-  }, [step]);
+  }, [step, isEditing]);
+
+  const loadEditingPuzzle = () => {
+    const newStep = {
+      type: 'start',
+      boardSnapshot: JSON.parse(
+        JSON.stringify(parseEditingPuzzle(editingPuzzle)),
+      ),
+      eliminations: [],
+    };
+    resetSteps();
+    addStep(newStep);
+  };
+
+  useLayoutEffect(() => {
+    setEditingPuzzle(() => {
+      const newPuzzle = createEmptyEditingPuzzle();
+      executeStep(step).forEach((row, rowIndex) =>
+        row.forEach((cell, columnIndex) => {
+          newPuzzle[rowIndex]![columnIndex] =
+            cell.hintValues.length === 1 ? cell.hintValues[0]!.toString() : '';
+        }),
+      );
+      return newPuzzle;
+    });
+  }, [isEditing]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useLayoutEffect(() => {
     setSliderValue(steps.length);
   }, [steps]);
 
   const resetSteps = () => {
+    setIsEditing(false);
     setSteps(() => []);
   };
   const addStep = (newStep: Step) => {
@@ -100,7 +149,6 @@ export const BoardProvider = ({ children }: BoardProviderProps) => {
       boardSnapshot: JSON.parse(JSON.stringify(puzzle)),
       eliminations: [],
     };
-    console.log(initStep);
     resetSteps();
     addStep(initStep);
   };
@@ -122,6 +170,11 @@ export const BoardProvider = ({ children }: BoardProviderProps) => {
         isSolved,
         isErrored,
         generatePuzzleWithApi,
+        isEditing,
+        setIsEditing,
+        editingPuzzle,
+        setEditingPuzzle,
+        loadEditingPuzzle,
       }}
     >
       {children}

@@ -9,7 +9,6 @@ export type Cell = {
   rowIndex: number;
   columnIndex: number;
   boxIndex: number;
-  isLocked: boolean;
 };
 export type Region = {
   cells: Cell[];
@@ -135,7 +134,6 @@ export const parseBoard = (board: number[][]) =>
           rowIndex,
           columnIndex,
           boxIndex: Math.floor(rowIndex / 3) * 3 + Math.floor(columnIndex / 3),
-          isLocked: value !== 0,
         }) as Cell,
     ),
   );
@@ -151,7 +149,6 @@ export const parseBoardString = (board: string) =>
         columnIndex: i % 9,
         boxIndex:
           Math.floor(Math.floor(i / 9) / 3) * 3 + Math.floor((i % 9) / 3),
-        isLocked: value !== 0,
       } as Cell;
     }),
     9,
@@ -276,3 +273,34 @@ export const editCell = (
   }
   return step;
 };
+
+export const createEmptyBoard = () =>
+  Array.from({ length: 9 }).map((_, rowIndex) =>
+    Array.from({ length: 9 }).map(
+      (_, columnIndex) =>
+        ({
+          hintValues: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+          rowIndex,
+          columnIndex,
+          boxIndex: Math.floor(rowIndex / 3) * 3 + Math.floor(columnIndex / 3),
+        }) as Cell,
+    ),
+  );
+
+export const createEmptyEditingPuzzle = () =>
+  Array.from({ length: 9 }).map(() => Array.from({ length: 9 }).map(() => ''));
+
+export const parseEditingPuzzle = (editingPuzzle: string[][]) =>
+  editingPuzzle.map((row, rowIndex) =>
+    row.map(
+      (value, columnIndex) =>
+        ({
+          hintValues: value
+            ? [parseInt(value) as CellValue]
+            : [1, 2, 3, 4, 5, 6, 7, 8, 9],
+          rowIndex,
+          columnIndex,
+          boxIndex: Math.floor(rowIndex / 3) * 3 + Math.floor(columnIndex / 3),
+        }) as Cell,
+    ),
+  );

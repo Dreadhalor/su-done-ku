@@ -1,6 +1,6 @@
 import { cn } from '@repo/utils';
 import { Addition, Cell, CellValue, Elimination } from '../utils';
-import { Button } from 'dread-ui';
+import { Button, Input } from 'dread-ui';
 import { useBoard } from '../providers/board-context';
 
 type CellProps = {
@@ -10,7 +10,14 @@ type CellProps = {
 };
 const CellComponent = ({ cell, eliminations, additions = [] }: CellProps) => {
   const { rowIndex, columnIndex, hintValues } = cell;
-  const { editCell, showPreview, isSolved } = useBoard();
+  const {
+    editCell,
+    showPreview,
+    isSolved,
+    isEditing,
+    editingPuzzle,
+    setEditingPuzzle,
+  } = useBoard();
   const value = cell.hintValues.length === 1 ? cell.hintValues[0] : null;
   const isErrored = cell.hintValues.length === 0;
 
@@ -71,37 +78,60 @@ const CellComponent = ({ cell, eliminations, additions = [] }: CellProps) => {
           'bg-green-200',
         isErrored && 'bg-red-500',
         isSolved && 'pointer-events-none',
+        isEditing && 'flex',
       )}
     >
-      {value && value}
-      {!value &&
-        Array.from({ length: 9 }).map((_, _index) => {
-          const hintValue = (_index + 1) as CellValue;
-          const isPresent = hintValues.includes(hintValue);
-          const isEliminated = relevantEliminations.includes(hintValue);
-          const isAdded = relevantAddedValues.includes(hintValue);
-          const isReferenced = relevantNumberReferences.includes(hintValue);
-          return (
-            <Button
-              key={hintValue}
-              variant='ghost'
-              className={cn(
-                'h-[14px] w-[14px] rounded-sm p-0 text-xs transition-none',
-                isEliminated && 'bg-red-500 text-white',
-                isReferenced &&
-                  isPresent &&
-                  showPreview &&
-                  'bg-green-500 text-white',
-                isAdded && showPreview && 'bg-blue-400 text-white',
-              )}
-              onClick={() => {
-                editCell(cell, hintValue, isEliminated || !isPresent);
-              }}
-            >
-              {isPresent || isAdded ? hintValue : ''}
-            </Button>
-          );
-        })}
+      {isEditing ? (
+        <Input
+          className='text-primary h-full w-full items-center rounded-none p-0 text-center'
+          value={editingPuzzle?.[rowIndex]?.[columnIndex] || ''}
+          onChange={(e) => {
+            // get the last character of the input
+            const lastChar = e.target.value.slice(-1);
+            // if the last character is a number, set the edited value to the last character
+            // also make sure to let the user backspace
+            if ((Number(lastChar) && lastChar !== '0') || lastChar === '') {
+              setEditingPuzzle((prev) => {
+                const newPuzzle = prev.map((row) => row.slice());
+                newPuzzle[rowIndex]![columnIndex] = lastChar;
+                return newPuzzle;
+              });
+            }
+          }}
+        />
+      ) : (
+        <>
+          {value && value}
+          {!value &&
+            Array.from({ length: 9 }).map((_, _index) => {
+              const hintValue = (_index + 1) as CellValue;
+              const isPresent = hintValues.includes(hintValue);
+              const isEliminated = relevantEliminations.includes(hintValue);
+              const isAdded = relevantAddedValues.includes(hintValue);
+              const isReferenced = relevantNumberReferences.includes(hintValue);
+              return (
+                <Button
+                  key={hintValue}
+                  variant='ghost'
+                  className={cn(
+                    'h-[14px] w-[14px] rounded-sm p-0 text-xs transition-none',
+                    isEliminated && 'bg-red-500 text-white',
+                    isReferenced &&
+                      isPresent &&
+                      showPreview &&
+                      'bg-green-500 text-white',
+                    isAdded && showPreview && 'bg-blue-400 text-white',
+                  )}
+                  onClick={() => {
+                    editCell(cell, hintValue, isEliminated || !isPresent);
+                  }}
+                >
+                  {isPresent || isAdded ? hintValue : ''}
+                </Button>
+              );
+            })}
+        </>
+      )}
     </div>
   );
 };

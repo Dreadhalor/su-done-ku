@@ -1,39 +1,22 @@
-import { Button, Card, CardContent } from 'dread-ui';
+import { Card, CardContent } from 'dread-ui';
 import { useEffect } from 'react';
-import { Cell, Step, convertBoardToSnapshot } from './utils';
+import { Step, createEmptyBoard } from './utils';
 import { StepPanel } from './components/step-panel';
 import { useBoard } from './providers/board-context';
 import { CellGrid } from './components/cell-grid';
 import { PreviewToggle } from './components/preview-toggle';
 import { HistorySlider } from './components/history-slider';
 import { GeneratePuzzleButton } from './components/generate-puzzle-button';
-import { LoadExamplePuzzleButton } from './components/load-example-puzzle-button';
+import { ImportPuzzleButton } from './components/import-puzzle-button';
 
 // create a sudoku board with a 9x9 grid of cells, where each cell is a 3x3 grid of cells containing numbers 1-9
 function App() {
-  const { step, resetSteps, addStep } = useBoard();
+  const { resetSteps, addStep } = useBoard();
 
   useEffect(() => {
-    const newBoard: Cell[][] = Array.from({ length: 9 }).map((_, rowIndex) =>
-      Array.from({ length: 9 }).map(
-        (_, columnIndex) =>
-          ({
-            hintValues: [1, 2, 3, 4, 5, 6, 7, 8, 9],
-            rowIndex,
-            columnIndex,
-            boxIndex:
-              Math.floor(rowIndex / 3) * 3 + Math.floor(columnIndex / 3),
-            isLocked: false,
-          }) as Cell,
-      ),
-    );
-
-    newBoard[4]![5]!.hintValues = [1];
-    newBoard[2]![2]!.hintValues = [4];
-
     const initStep: Step = {
       type: 'start',
-      boardSnapshot: JSON.parse(JSON.stringify(newBoard)),
+      boardSnapshot: JSON.parse(JSON.stringify(createEmptyBoard())),
       eliminations: [],
     };
     resetSteps();
@@ -52,20 +35,18 @@ function App() {
         </Card>
       </div>
       <div className='flex flex-col gap-4'>
-        <LoadExamplePuzzleButton />
+        {/* <LoadExamplePuzzleButton /> */}
+        <Card>
+          <CardContent noHeader className='flex p-1'>
+            <ImportPuzzleButton />
+          </CardContent>
+        </Card>
         <Card>
           <CardContent noHeader className='flex p-1'>
             <GeneratePuzzleButton />
           </CardContent>
         </Card>
         <StepPanel />
-        {/* <Button
-          onClick={() =>
-            console.log(convertBoardToSnapshot(step?.boardSnapshot || []))
-          }
-        >
-          Export board
-        </Button> */}
       </div>
     </div>
   );
