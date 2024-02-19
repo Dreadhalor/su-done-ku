@@ -11,6 +11,10 @@ type Puzzle = {
 };
 const difficulties = ['easy', 'medium', 'hard'] as const;
 type DifficultySetting = (typeof difficulties)[number];
+export type ApiResponseBody = {
+  difficulty: DifficultySetting;
+  puzzle: Puzzle;
+};
 
 // Utility function to read puzzles from a file and select a random one
 const getRandomPuzzle = (filePath: string): Promise<Puzzle> => {

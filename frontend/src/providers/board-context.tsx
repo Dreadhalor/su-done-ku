@@ -5,8 +5,9 @@ import {
   useLayoutEffect,
   useState,
 } from 'react';
-import { Cell, CellValue, Step, executeStep } from '../utils';
+import { Cell, CellValue, Step, executeStep, parseAPIBoard } from '../utils';
 import { editCell as _editCell } from '../utils/index';
+import { ApiResponseBody } from '@repo/su-done-ku-backend/src/routes/random';
 
 type BoardContextType = {
   board: Cell[][];
@@ -25,6 +26,7 @@ type BoardContextType = {
   addStep: (newStep: Step) => void;
   editCell: (cell: Cell, hintValue: CellValue, enabled: boolean) => void;
   isSolved: boolean;
+  generatePuzzleWithApi: (difficulty?: string) => void;
 };
 
 export const BoardContext = createContext<BoardContextType>(
@@ -85,11 +87,22 @@ export const BoardProvider = ({ children }: BoardProviderProps) => {
       addStep(_step);
   };
 
-  // useLayoutEffect(() => {
-  //   if (showPreview) {
-  //     setBoard(step?.boardSnapshot || [[]]);
-  //   }
-  // }, [step, showPreview]);
+  const generatePuzzleWithApi = async (difficulty?: string) => {
+    const response = (await fetch(
+      `http://localhost:3000/api/puzzle/random${
+        difficulty ? `?difficulty=${difficulty}` : ''
+      }`,
+    ).then((res) => res.json())) as ApiResponseBody;
+    const puzzle = parseAPIBoard(response);
+    const initStep: Step = {
+      type: 'start',
+      boardSnapshot: JSON.parse(JSON.stringify(puzzle)),
+      eliminations: [],
+    };
+    console.log(initStep);
+    resetSteps();
+    addStep(initStep);
+  };
 
   return (
     <BoardContext.Provider
@@ -110,6 +123,7 @@ export const BoardProvider = ({ children }: BoardProviderProps) => {
         addStep,
         editCell,
         isSolved,
+        generatePuzzleWithApi,
       }}
     >
       {children}

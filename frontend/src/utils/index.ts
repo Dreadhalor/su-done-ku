@@ -1,5 +1,6 @@
 import { chunk, flatMap, groupBy, map } from 'lodash';
 import { Strategy } from '.';
+import { ApiResponseBody } from '@repo/su-done-ku-backend/src/routes/random';
 
 export * from './algorithms';
 
@@ -156,6 +157,9 @@ export const parseBoardString = (board: string) =>
     }),
     9,
   );
+// parse results of our API call
+export const parseAPIBoard = (res: ApiResponseBody) =>
+  parseBoardString(res.puzzle.puzzle);
 
 // we're not actually using this anymore
 export const sortCells = (a: Cell, b: Cell | undefined) =>

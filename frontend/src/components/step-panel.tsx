@@ -1,4 +1,9 @@
 import {
+  Accordion,
+  AccordionContent,
+  AccordionHeader,
+  AccordionItem,
+  AccordionTrigger,
   Badge,
   BadgeVariants,
   Button,
@@ -113,22 +118,31 @@ const StepPanel = () => {
   return (
     <Card className='w-[250px]'>
       <CardContent noHeader className='flex flex-col justify-center p-1'>
-        <Button
-          className='mb-2 rounded-lg'
-          onClick={() => advanceStep()}
-          disabled={isSolved}
-        >
-          {isSolved ? 'Solved!' : 'Take Step'}
-        </Button>
-        {Object.entries(strategyStates).map(([strategy, checked]) => (
-          <StepControl
-            key={strategy}
-            id={strategy}
-            checked={checked}
-            name={strategy}
-            onCheckedChange={handleStrategyChange(strategy)}
-          />
-        ))}
+        <Accordion type='single' collapsible>
+          <AccordionItem value='strategies' className='border-none'>
+            <AccordionHeader className='flex w-full flex-nowrap'>
+              <Button
+                className='flex-1 rounded-lg'
+                onClick={() => advanceStep()}
+                disabled={isSolved}
+              >
+                {isSolved ? 'Solved!' : 'Take Step'}
+              </Button>
+              <AccordionTrigger className='flex-grow-0 p-1' />
+            </AccordionHeader>
+            <AccordionContent className='py-1'>
+              {Object.entries(strategyStates).map(([strategy, checked]) => (
+                <StepControl
+                  key={strategy}
+                  id={strategy}
+                  checked={checked}
+                  name={strategy}
+                  onCheckedChange={handleStrategyChange(strategy)}
+                />
+              ))}
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </CardContent>
     </Card>
   );

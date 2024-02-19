@@ -6,7 +6,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from 'dread-ui';
+import { useBoard } from '../providers/board-context';
 const GeneratePuzzleButton = () => {
+  const { generatePuzzleWithApi } = useBoard();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -15,10 +18,28 @@ const GeneratePuzzleButton = () => {
           <ChevronDown className='ml-auto' />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuItem>Easy</DropdownMenuItem>
-        <DropdownMenuItem>Medium</DropdownMenuItem>
-        <DropdownMenuItem>Hard</DropdownMenuItem>
+      <DropdownMenuContent className='dropdown-menu-content'>
+        <DropdownMenuItem
+          onClick={() => {
+            generatePuzzleWithApi('easy');
+          }}
+        >
+          Easy
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => {
+            generatePuzzleWithApi('medium');
+          }}
+        >
+          Medium
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => {
+            generatePuzzleWithApi('hard');
+          }}
+        >
+          Hard
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

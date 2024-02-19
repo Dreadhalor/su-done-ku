@@ -1,6 +1,6 @@
 import { Button, Card, CardContent } from 'dread-ui';
 import { useEffect } from 'react';
-import { Cell, Step, convertBoardToSnapshot, parseBoardString } from './utils';
+import { Cell, Step, convertBoardToSnapshot } from './utils';
 import { StepPanel } from './components/step-panel';
 import { useBoard } from './providers/board-context';
 import { CellGrid } from './components/cell-grid';
@@ -40,23 +40,6 @@ function App() {
     addStep(initStep);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const generatePuzzleWithApi = async () => {
-    const response = await fetch('http://localhost:3000/api/puzzle/random');
-    const res = await response.json();
-    const { puzzle } = res;
-    console.log(puzzle);
-    const initStep: Step = {
-      type: 'start',
-      boardSnapshot: JSON.parse(
-        JSON.stringify(parseBoardString(puzzle.puzzle)),
-      ),
-      eliminations: [],
-    };
-    console.log(initStep);
-    resetSteps();
-    addStep(initStep);
-  };
-
   return (
     <div className='flex h-full w-full items-center justify-center gap-4 border-4 border-white text-black'>
       <div className='flex flex-col gap-2'>
@@ -83,7 +66,6 @@ function App() {
         >
           Export board
         </Button>
-        <Button onClick={() => generatePuzzleWithApi()}>Generate puzzle</Button>
       </div>
     </div>
   );
