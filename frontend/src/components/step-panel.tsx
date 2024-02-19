@@ -69,7 +69,7 @@ const StepControl = ({
 };
 
 const StepPanel = () => {
-  const { step, addStep, isSolved } = useBoard();
+  const { step, addStep, isSolved, isErrored } = useBoard();
   const [strategyStates, setStrategyStates] = useState({
     crosshatch: true,
     hiddenSingles: true,
@@ -122,11 +122,15 @@ const StepPanel = () => {
           <AccordionItem value='strategies' className='border-none'>
             <AccordionHeader className='flex w-full flex-nowrap'>
               <Button
-                className='flex-1 rounded-lg'
+                className={cn(
+                  'flex-1 rounded-lg',
+                  isSolved && 'bg-green-500',
+                  isErrored && 'bg-red-500',
+                )}
                 onClick={() => advanceStep()}
-                disabled={isSolved}
+                disabled={isSolved || isErrored}
               >
-                {isSolved ? 'Solved!' : 'Take Step'}
+                {isSolved ? 'Solved!' : isErrored ? 'Error!' : 'Take Step'}
               </Button>
               <AccordionTrigger className='flex-grow-0 p-1' />
             </AccordionHeader>

@@ -120,7 +120,6 @@ export const executeStep = (step: Step) => {
     });
   });
   step.additions?.forEach(({ cell, hintValue }) => {
-    console.log({ cell, hintValue });
     const _cell = snapshot[cell.rowIndex]![cell.columnIndex]!;
     _cell.hintValues = [...new Set([...cell.hintValues, hintValue])];
   });

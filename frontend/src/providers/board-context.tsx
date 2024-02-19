@@ -10,10 +10,6 @@ import { editCell as _editCell } from '../utils/index';
 import { ApiResponseBody } from '@repo/su-done-ku-backend/src/routes/random';
 
 type BoardContextType = {
-  board: Cell[][];
-  setBoard: React.Dispatch<React.SetStateAction<Cell[][]>>;
-  visibleBoard: Cell[][];
-  setVisibleBoard: React.Dispatch<React.SetStateAction<Cell[][]>>;
   step: Step | null;
   setStep: React.Dispatch<React.SetStateAction<Step | null>>;
   steps: Step[];
@@ -26,6 +22,7 @@ type BoardContextType = {
   addStep: (newStep: Step) => void;
   editCell: (cell: Cell, hintValue: CellValue, enabled: boolean) => void;
   isSolved: boolean;
+  isErrored: boolean;
   generatePuzzleWithApi: (difficulty?: string) => void;
 };
 
@@ -45,19 +42,23 @@ type BoardProviderProps = {
   children: React.ReactNode;
 };
 export const BoardProvider = ({ children }: BoardProviderProps) => {
-  const [board, setBoard] = useState<Cell[][]>([[]]);
-  const [visibleBoard, setVisibleBoard] = useState<Cell[][]>([[]]);
   const [step, setStep] = useState<Step | null>(null);
   const [steps, setSteps] = useState<Step[]>([]);
   const [showPreview, setShowPreview] = useState<boolean>(true);
   const [sliderValue, setSliderValue] = useState<number>(0);
   const [isSolved, setIsSolved] = useState<boolean>(false);
+  const [isErrored, setIsErrored] = useState<boolean>(false);
 
   useEffect(() => {
     if (step) {
       setIsSolved(
         executeStep(step).every((row) =>
           row.every((cell) => cell.hintValues.length === 1),
+        ) || false,
+      );
+      setIsErrored(
+        executeStep(step).some((row) =>
+          row.some((cell) => cell.hintValues.length === 0),
         ) || false,
       );
     }
@@ -107,10 +108,6 @@ export const BoardProvider = ({ children }: BoardProviderProps) => {
   return (
     <BoardContext.Provider
       value={{
-        board,
-        setBoard,
-        visibleBoard,
-        setVisibleBoard,
         step,
         setStep,
         steps,
@@ -123,6 +120,7 @@ export const BoardProvider = ({ children }: BoardProviderProps) => {
         addStep,
         editCell,
         isSolved,
+        isErrored,
         generatePuzzleWithApi,
       }}
     >

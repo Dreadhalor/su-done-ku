@@ -59,13 +59,13 @@ function App() {
           </CardContent>
         </Card>
         <StepPanel />
-        <Button
+        {/* <Button
           onClick={() =>
             console.log(convertBoardToSnapshot(step?.boardSnapshot || []))
           }
         >
           Export board
-        </Button>
+        </Button> */}
       </div>
     </div>
   );

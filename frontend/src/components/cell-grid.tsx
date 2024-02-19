@@ -4,13 +4,14 @@ import { executeStep } from '../utils';
 import { Cell } from './cell';
 
 const GridTopAndBottom = () => {
-  const { isSolved } = useBoard();
+  const { isSolved, isErrored } = useBoard();
 
   return (
     <div
       className={cn(
         'flex h-5 flex-nowrap justify-center text-sm text-white',
         isSolved && 'bg-green-500',
+        isErrored && 'bg-red-500',
       )}
     >
       {Array.from({ length: 9 }).map((_, index) => (
@@ -25,7 +26,7 @@ const GridTopAndBottom = () => {
   );
 };
 const GridLeftAndRight = ({ index }: { index: number }) => {
-  const { isSolved } = useBoard();
+  const { isSolved, isErrored } = useBoard();
 
   // count up from A
   return (
@@ -33,6 +34,7 @@ const GridLeftAndRight = ({ index }: { index: number }) => {
       className={cn(
         'flex w-5 items-center justify-center border text-sm text-white',
         isSolved && 'bg-green-500',
+        isErrored && 'bg-red-500',
       )}
     >
       {String.fromCharCode(65 + index)}
