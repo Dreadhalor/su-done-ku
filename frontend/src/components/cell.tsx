@@ -18,7 +18,6 @@ const CellComponent = ({ cell, eliminations, additions = [] }: CellProps) => {
     editingPuzzle,
     setEditingPuzzle,
   } = useBoard();
-  const value = cell.hintValues.length === 1 ? cell.hintValues[0] : null;
   const isErrored = cell.hintValues.length === 0;
 
   const relevantEliminations = eliminations
@@ -63,6 +62,11 @@ const CellComponent = ({ cell, eliminations, additions = [] }: CellProps) => {
   const relevantAddedValues = relevantAdditions.map(
     (addition) => addition.hintValue,
   );
+
+  const value =
+    cell.hintValues.length === 1 && relevantAdditions.length === 0
+      ? cell.hintValues[0]
+      : null;
 
   return (
     <div

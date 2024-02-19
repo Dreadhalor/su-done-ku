@@ -1,20 +1,9 @@
 import express, { Request, Response } from 'express';
 import fs from 'fs';
 import path from 'path';
+import { DifficultySetting, Puzzle, difficulties } from '../types';
 
 const router = express.Router();
-
-type Puzzle = {
-  sha: string;
-  rating: string;
-  puzzle: string;
-};
-const difficulties = ['easy', 'medium', 'hard'] as const;
-type DifficultySetting = (typeof difficulties)[number];
-export type ApiResponseBody = {
-  difficulty: DifficultySetting;
-  puzzle: Puzzle;
-};
 
 // Utility function to read puzzles from a file and select a random one
 const getRandomPuzzle = (filePath: string): Promise<Puzzle> => {

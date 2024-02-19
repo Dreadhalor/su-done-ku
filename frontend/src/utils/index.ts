@@ -1,6 +1,6 @@
 import { chunk, flatMap, groupBy, map } from 'lodash';
 import { Strategy } from '.';
-import { ApiResponseBody } from '@repo/su-done-ku-backend/src/routes/random';
+import { ApiResponseBody } from '@repo/su-done-ku-backend/src/types';
 
 export * from './algorithms';
 

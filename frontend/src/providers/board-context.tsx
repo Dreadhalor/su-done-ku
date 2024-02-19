@@ -10,7 +10,7 @@ import {
   parseEditingPuzzle,
 } from '../utils';
 import { editCell as _editCell } from '../utils/index';
-import { ApiResponseBody } from '@repo/su-done-ku-backend/src/routes/random';
+import { ApiResponseBody } from '@repo/su-done-ku-backend/src/types';
 
 type BoardContextType = {
   step: Step | null;

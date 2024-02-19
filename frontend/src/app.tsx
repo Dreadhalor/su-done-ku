@@ -24,12 +24,12 @@ function App() {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className='flex h-full w-full items-center justify-center gap-4 border-4 border-white text-black'>
+    <div className='flex h-full w-full items-center justify-center gap-4 text-black'>
       <div className='flex flex-col gap-2'>
         <PreviewToggle />
         <CellGrid />
         <Card>
-          <CardContent noHeader className='p-2'>
+          <CardContent noHeader className='p-1 px-2'>
             <HistorySlider />
           </CardContent>
         </Card>
