@@ -118,7 +118,7 @@ const CellComponent = ({ cell, eliminations, additions = [] }: CellProps) => {
                   key={hintValue}
                   variant='ghost'
                   className={cn(
-                    'h-[14px] w-[14px] rounded-sm p-0 text-xs transition-none',
+                    'h-[14px] w-[14px] rounded-sm p-0 text-xs font-normal transition-none',
                     isEliminated && 'bg-red-500 text-white',
                     isReferenced &&
                       isPresent &&
