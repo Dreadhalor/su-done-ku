@@ -5,4 +5,5 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react() as PluginOption, tsconfigPaths() as PluginOption], // Cast the plugins to PluginOption
+  base: '/su-done-ku/', // Set the base path
 });

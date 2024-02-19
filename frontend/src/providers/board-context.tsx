@@ -139,7 +139,7 @@ export const BoardProvider = ({ children }: BoardProviderProps) => {
 
   const generatePuzzleWithApi = async (difficulty?: string) => {
     const response = (await fetch(
-      `http://localhost:3000/api/puzzle/random${
+      `http://localhost:3000/su-done-ku/api/random${
         difficulty ? `?difficulty=${difficulty}` : ''
       }`,
     ).then((res) => res.json())) as ApiResponseBody;
