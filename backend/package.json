@@ -4,8 +4,7 @@
   "description": "The backend of su-done-ku.",
   "main": "src/server.ts",
   "scripts": {
-    "build": "tsc",
-    "start": "node dist/server.js",
+    "start": "ts-node --transpile-only ./src/server.ts",
     "dev": "nodemon --exec ts-node ./src/server.ts"
   },
   "author": "",

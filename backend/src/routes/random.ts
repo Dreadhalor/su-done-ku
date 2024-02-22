@@ -15,10 +15,14 @@ const getRandomPuzzle = (filePath: string): Promise<Puzzle> => {
 
       const lines = data.trim().split('\n');
       const randomLine = lines[Math.floor(Math.random() * lines.length)];
-      const [sha, puzzle, rating] = randomLine
-        .split(' ')
-        .filter((predicate) => predicate !== '');
-      resolve({ sha, rating, puzzle });
+      if (randomLine) {
+        const [sha, puzzle, rating] = randomLine
+          .split(' ')
+          .filter((predicate) => predicate !== '') as [string, string, string];
+        resolve({ sha, rating, puzzle });
+      } else {
+        reject(new Error('No random line found.'));
+      }
     });
   });
 };
