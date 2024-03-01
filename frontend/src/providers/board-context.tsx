@@ -11,6 +11,7 @@ import {
 } from '../utils';
 import { editCell as _editCell } from '../utils/index';
 import { ApiResponseBody } from '@repo/su-done-ku-backend/src/types';
+import { getBackendBaseUrl } from '@repo/utils';
 
 type BoardContextType = {
   step: Step | null;
@@ -138,8 +139,10 @@ export const BoardProvider = ({ children }: BoardProviderProps) => {
   };
 
   const generatePuzzleWithApi = async (difficulty?: string) => {
+    const base = getBackendBaseUrl(import.meta.env.PROD);
+    console.log('base', base);
     const response = (await fetch(
-      `http://localhost:3000/su-done-ku/api/random${
+      `${base}/su-done-ku/api/random${
         difficulty ? `?difficulty=${difficulty}` : ''
       }`,
     ).then((res) => res.json())) as ApiResponseBody;
