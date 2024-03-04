@@ -4,11 +4,14 @@ import { App } from './app';
 import './index.scss';
 import 'dread-ui/style.scss';
 import { BoardProvider } from './providers/board-context';
+import { DreadUiProvider } from 'dread-ui';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <BoardProvider>
-      <App />
-    </BoardProvider>
+    <DreadUiProvider>
+      <BoardProvider>
+        <App />
+      </BoardProvider>
+    </DreadUiProvider>
   </React.StrictMode>,
 );

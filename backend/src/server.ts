@@ -8,7 +8,7 @@ app.use(cors());
 const PORT = process.env.PORT || 3000;
 
 // Use the random puzzle route
-app.use('/api/puzzle/random', randomRouter);
+app.use('/su-done-ku/api/random', randomRouter);
 
 // Serve su-done-ku
 app.use('/', express.static(path.join(__dirname, '../../frontend/dist')));

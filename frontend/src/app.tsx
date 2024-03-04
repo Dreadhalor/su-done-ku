@@ -1,4 +1,4 @@
-import { Card, CardContent } from 'dread-ui';
+import { Card, CardContent, UserMenu } from 'dread-ui';
 import { useEffect } from 'react';
 import { Step, createEmptyBoard } from './utils';
 import { StepPanel } from './components/step-panel';
@@ -36,11 +36,15 @@ function App() {
       </div>
       <div className='flex flex-col gap-4'>
         {/* <LoadExamplePuzzleButton /> */}
-        <Card>
-          <CardContent noHeader className='flex p-1'>
-            <ImportPuzzleButton />
-          </CardContent>
-        </Card>
+        <div className='flex w-full flex-nowrap gap-4'>
+          <Card className='my-auto flex flex-1 items-center'>
+            <CardContent noHeader className='flex flex-1 p-1'>
+              <ImportPuzzleButton />
+            </CardContent>
+          </Card>
+          <UserMenu className='h-12 w-12' />
+        </div>
+
         <Card>
           <CardContent noHeader className='flex p-1'>
             <GeneratePuzzleButton />

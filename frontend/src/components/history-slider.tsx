@@ -1,10 +1,11 @@
-import { Slider } from 'dread-ui';
+import { Slider, useAchievements } from 'dread-ui';
 import { useBoard } from '../providers/board-context';
 import { Fragment } from 'react';
 import { cn } from '@repo/utils';
 
 const HistorySlider = () => {
   const { setStep, steps, sliderValue, setSliderValue, isEditing } = useBoard();
+  const { unlockAchievementById } = useAchievements();
   return (
     <div className='relative py-2'>
       {steps.length > 1 &&
@@ -41,7 +42,11 @@ const HistorySlider = () => {
         onValueChange={(e) => {
           const stepIndex = e[0]!;
           const _step = steps[stepIndex]!;
-          setSliderValue(stepIndex);
+          setSliderValue((prev) => {
+            if (prev < stepIndex)
+              unlockAchievementById('fast_forward', 'su-done-ku');
+            return stepIndex;
+          });
           setStep(_step);
         }}
       />

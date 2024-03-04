@@ -11,6 +11,7 @@ import {
   CardContent,
   Checkbox,
   Label,
+  useAchievements,
 } from 'dread-ui';
 import { useBoard } from '../providers/board-context';
 import { executeStep, strategies } from '../utils';
@@ -70,6 +71,7 @@ const StepControl = ({
 
 const StepPanel = () => {
   const { step, addStep, isSolved, isErrored, isEditing } = useBoard();
+  const { unlockAchievementById } = useAchievements();
   const [strategyStates, setStrategyStates] = useState({
     crosshatch: true,
     hiddenSingles: true,
@@ -83,8 +85,16 @@ const StepPanel = () => {
     pointingTriples: true,
     boxLineReduction: true,
   });
+  const isNakedLockedSet = (strategy: string) =>
+    strategy === 'nakedPairs' ||
+    strategy === 'nakedTriples' ||
+    strategy === 'nakedQuads';
   const handleStrategyChange = (strategy: string) => (checked: boolean) => {
     setStrategyStates((prev) => ({ ...prev, [strategy]: checked }));
+    if (isNakedLockedSet(strategy) && !checked)
+      unlockAchievementById('uncheck_naked_pairs', 'su-done-ku');
+    if (isNakedLockedSet(strategy) && checked)
+      unlockAchievementById('check_naked_pairs', 'su-done-ku');
   };
 
   const advanceStep = () => {
@@ -96,6 +106,27 @@ const StepPanel = () => {
       if (checked) {
         const newStep = strategies[strategy as Strategy](board);
         if (newStep.eliminations.length > 0) {
+          switch (newStep.type) {
+            case 'crosshatch':
+              unlockAchievementById('crosshatching', 'su-done-ku');
+              break;
+            case 'nakedPairs':
+              unlockAchievementById('naked_pair', 'su-done-ku');
+              break;
+            case 'nakedQuads':
+              unlockAchievementById('naked_quad', 'su-done-ku');
+              break;
+            case 'hiddenPairs':
+              unlockAchievementById('hidden_pair', 'su-done-ku');
+              break;
+            case 'pointingPairs':
+            case 'pointingTriples':
+              unlockAchievementById('pointing_set', 'su-done-ku');
+              break;
+            case 'boxLineReduction':
+              unlockAchievementById('box_line_reduction', 'su-done-ku');
+              break;
+          }
           addStep({
             ...newStep,
             failedStrategies,
@@ -113,10 +144,11 @@ const StepPanel = () => {
       failedStrategies,
       skippedStrategies,
     });
+    unlockAchievementById('stump_solver', 'su-done-ku');
   };
 
   return (
-    <Card className='w-[250px]'>
+    <Card className='w-[250px] select-none'>
       <CardContent noHeader className='flex flex-col justify-center p-1'>
         <Accordion type='single' defaultValue='strategies' collapsible>
           <AccordionItem value='strategies' className='border-none'>
