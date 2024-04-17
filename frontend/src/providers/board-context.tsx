@@ -46,6 +46,7 @@ export const BoardContext = createContext<BoardContextType>(
   {} as BoardContextType,
 );
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useBoard = () => {
   const context = useContext(BoardContext);
   if (!context) {
